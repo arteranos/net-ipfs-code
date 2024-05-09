@@ -1,0 +1,17 @@
+{
+    "name": "ipfs.Http",
+    "rootNamespace": "",
+    "references": [
+        "GUID:e992fb8119031314d9e6982eec5e7002",
+        "GUID:4c8cb9593dbbc3548a812336c8647bd3"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

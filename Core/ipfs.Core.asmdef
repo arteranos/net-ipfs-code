@@ -1,11 +1,7 @@
 {
-    "name": "ipfs.Http",
+    "name": "ipfs.Core",
     "rootNamespace": "",
-    "references": [
-        "GUID:e992fb8119031314d9e6982eec5e7002",
-        "GUID:12a71712e319a02479dd56e4d0f76c08",
-        "GUID:4c8cb9593dbbc3548a812336c8647bd3"
-    ],
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
