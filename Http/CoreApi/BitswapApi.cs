@@ -18,7 +18,7 @@ namespace Ipfs.Http
 
         public async Task<IEnumerable<Cid>> WantsAsync(MultiHash peer = null, CancellationToken cancel = default(CancellationToken))
         {
-            var json = await ipfs.DoCommandAsync("bitswap/wantlist", cancel, peer?.ToString());
+            var json = await ipfs.DoCommandAsync("bitswap/wantlist", cancel, peer?.ToString()).ConfigureAwait(false);
             var keys = (JArray)(JObject.Parse(json)["Keys"]);
             // https://github.com/ipfs/go-ipfs/issues/5077
             return keys
@@ -33,7 +33,7 @@ namespace Ipfs.Http
 
         public async Task<BitswapLedger> LedgerAsync(Peer peer, CancellationToken cancel = default(CancellationToken))
         {
-            var json = await ipfs.DoCommandAsync("bitswap/ledger", cancel, peer.Id.ToString());
+            var json = await ipfs.DoCommandAsync("bitswap/ledger", cancel, peer.Id.ToString()).ConfigureAwait(false);
             var o = JObject.Parse(json);
             return new BitswapLedger
             {

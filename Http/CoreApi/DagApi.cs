@@ -71,7 +71,7 @@ namespace Ipfs.Http
                 $"format={contentType}",
                 $"pin={pin.ToString().ToLowerInvariant()}",
                 $"hash={multiHash}",
-                $"cid-base={encoding}");
+                $"cid-base={encoding}").ConfigureAwait(false);
             var result = JObject.Parse(json);
             return (Cid)(string)result["Cid"]["/"];
         }
@@ -80,7 +80,7 @@ namespace Ipfs.Http
             Cid id,
             CancellationToken cancel = default(CancellationToken))
         {
-            var json = await ipfs.DoCommandAsync("dag/get", cancel, id);
+            var json = await ipfs.DoCommandAsync("dag/get", cancel, id).ConfigureAwait(false);
             return JObject.Parse(json);
         }
 
@@ -89,13 +89,13 @@ namespace Ipfs.Http
             string path,
             CancellationToken cancel = default(CancellationToken))
         {
-            var json = await ipfs.DoCommandAsync("dag/get", cancel, path);
+            var json = await ipfs.DoCommandAsync("dag/get", cancel, path).ConfigureAwait(false);
             return JToken.Parse(json);
         }
 
         public async Task<T> GetAsync<T>(Cid id, CancellationToken cancel = default(CancellationToken))
         {
-            var json = await ipfs.DoCommandAsync("dag/get", cancel, id);
+            var json = await ipfs.DoCommandAsync("dag/get", cancel, id).ConfigureAwait(false);
             return JsonConvert.DeserializeObject<T>(json);
         }
     }

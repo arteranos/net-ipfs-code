@@ -26,7 +26,7 @@ namespace Ipfs.Http
         {
             using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
-                var node = await AddAsync(stream, Path.GetFileName(path), options, cancel);
+                var node = await AddAsync(stream, Path.GetFileName(path), options, cancel).ConfigureAwait(false);
                 return node;
             }
         }
@@ -63,7 +63,7 @@ namespace Ipfs.Http
 
             opts.Add($"chunker=size-{options.ChunkSize}");
 
-            var response = await ipfs.Upload2Async("add", cancel, stream, name, opts.ToArray());
+            var response = await ipfs.Upload2Async("add", cancel, stream, name, opts.ToArray()).ConfigureAwait(false);
 
             // The result is a stream of LDJSON objects.
             // See https://github.com/ipfs/go-ipfs/issues/4852
@@ -73,7 +73,7 @@ namespace Ipfs.Http
             {
                 while (jr.Read())
                 {
-                    var r = await JObject.LoadAsync(jr, cancel);
+                    var r = await JObject.LoadAsync(jr, cancel).ConfigureAwait(false);
 
                     // If a progress report.
                     if (r.ContainsKey("Bytes"))
@@ -137,7 +137,7 @@ namespace Ipfs.Http
 #endif
             // Create the directory with links to the created files and sub-directories
             var folder = emptyFolder.Value.AddLinks(links);
-            var directory = await ipfs.Object.PutAsync(folder, cancel);
+            var directory = await ipfs.Object.PutAsync(folder, cancel).ConfigureAwait(false);
 
             return new FileSystemNode
             {
@@ -165,7 +165,7 @@ namespace Ipfs.Http
         /// </returns>
         public async Task<String> ReadAllTextAsync(string path, CancellationToken cancel = default)
         {
-            using (var data = await ReadFileAsync(path, cancel))
+            using (var data = await ReadFileAsync(path, cancel).ConfigureAwait(false))
             using (var text = new StreamReader(data))
             {
                 return await text.ReadToEndAsync();
@@ -224,7 +224,7 @@ namespace Ipfs.Http
         /// <returns></returns>
         public async Task<IFileSystemNode> ListAsync(string path, CancellationToken cancel = default)
         {
-            var json = await ipfs.DoCommandAsync("ls", cancel, path);
+            var json = await ipfs.DoCommandAsync("ls", cancel, path).ConfigureAwait(false);
             var r = JObject.Parse(json);
             var o = (JObject)r["Objects"]?[0];
 

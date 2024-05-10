@@ -22,7 +22,7 @@ namespace Ipfs.Http
 
         public async Task<IEnumerable<string>> SubscribedTopicsAsync(CancellationToken cancel = default)
         {
-            var json = await ipfs.DoCommandAsync("pubsub/ls", cancel);
+            var json = await ipfs.DoCommandAsync("pubsub/ls", cancel).ConfigureAwait(false);
             var result = JObject.Parse(json);
             var strings = result["Strings"] as JArray;
             if (strings == null) return new string[0];
@@ -31,7 +31,7 @@ namespace Ipfs.Http
 
         public async Task<IEnumerable<Peer>> PeersAsync(string topic = null, CancellationToken cancel = default)
         {
-            var json = await ipfs.DoCommandAsync("pubsub/peers", cancel, topic);
+            var json = await ipfs.DoCommandAsync("pubsub/peers", cancel, topic).ConfigureAwait(false);
             var result = JObject.Parse(json);
             var strings = result["Strings"] as JArray;
 
@@ -41,24 +41,24 @@ namespace Ipfs.Http
             return strings.Select(s => new Peer { Id = (string)s });
         }
 
-        public Task PublishAsync(string topic, byte[] message, CancellationToken cancel = default)
+        public async Task PublishAsync(string topic, byte[] message, CancellationToken cancel = default)
         {
             var url = new StringBuilder();
             url.Append("/api/v0/pubsub/pub");
             url.Append("?arg=");
             url.Append(Multibase.Encode(MultibaseEncoding.Base64Url, Encoding.UTF8.GetBytes(topic)));
 
-            return ipfs.DoCommandAsync(new Uri(ipfs.ApiUri, url.ToString()), message, cancel);
+            await ipfs.DoCommandAsync(new Uri(ipfs.ApiUri, url.ToString()), message, cancel).ConfigureAwait(false);
         }
 
-        public Task PublishAsync(string topic, Stream message, CancellationToken cancel = default)
+        public async Task PublishAsync(string topic, Stream message, CancellationToken cancel = default)
         {
             var url = new StringBuilder();
             url.Append("/api/v0/pubsub/pub");
             url.Append("?arg=");
             url.Append(Multibase.Encode(MultibaseEncoding.Base64Url, Encoding.UTF8.GetBytes(topic)));
 
-            return ipfs.DoCommandAsync(new Uri(ipfs.ApiUri, url.ToString()), message, cancel);
+            await ipfs.DoCommandAsync(new Uri(ipfs.ApiUri, url.ToString()), message, cancel).ConfigureAwait(false);
         }
 
         public async Task PublishAsync(string topic, string message, CancellationToken cancel = default)
@@ -68,7 +68,7 @@ namespace Ipfs.Http
             url.Append("?arg=");
             url.Append(Multibase.Encode(MultibaseEncoding.Base64Url, Encoding.UTF8.GetBytes(topic)));
 
-            await ipfs.DoCommandAsync(new Uri(ipfs.ApiUri, url.ToString()), message, cancel);
+            await ipfs.DoCommandAsync(new Uri(ipfs.ApiUri, url.ToString()), message, cancel).ConfigureAwait(false);
         }
 
         public async Task SubscribeAsync(string topic, Action<IPublishedMessage> handler, CancellationToken cancellationToken)

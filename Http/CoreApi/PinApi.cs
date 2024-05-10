@@ -19,14 +19,14 @@ namespace Ipfs.Http
         public async Task<IEnumerable<Cid>> AddAsync(string path, bool recursive = true, CancellationToken cancel = default(CancellationToken))
         {
             var opts = "recursive=" + recursive.ToString().ToLowerInvariant();
-            var json = await ipfs.DoCommandAsync("pin/add", cancel, path, opts);
+            var json = await ipfs.DoCommandAsync("pin/add", cancel, path, opts).ConfigureAwait(false);
             return ((JArray)JObject.Parse(json)["Pins"])
                 .Select(p => (Cid)(string)p);
         }
 
         public async Task<IEnumerable<Cid>> ListAsync(CancellationToken cancel = default(CancellationToken))
         {
-            var json = await ipfs.DoCommandAsync("pin/ls", cancel);
+            var json = await ipfs.DoCommandAsync("pin/ls", cancel).ConfigureAwait(false);
             var keys = (JObject)(JObject.Parse(json)["Keys"]);
             return keys
                 .Properties()
@@ -36,7 +36,7 @@ namespace Ipfs.Http
         public async Task<IEnumerable<Cid>> RemoveAsync(Cid id, bool recursive = true, CancellationToken cancel = default(CancellationToken))
         {
             var opts = "recursive=" + recursive.ToString().ToLowerInvariant();
-            var json = await ipfs.DoCommandAsync("pin/rm", cancel, id, opts);
+            var json = await ipfs.DoCommandAsync("pin/rm", cancel, id, opts).ConfigureAwait(false);
             return ((JArray)JObject.Parse(json)["Pins"])
                 .Select(p => (Cid)(string)p);
         }

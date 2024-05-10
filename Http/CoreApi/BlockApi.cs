@@ -19,7 +19,7 @@ namespace Ipfs.Http
 
         public async Task<byte[]> GetAsync(Cid id, CancellationToken cancel = default(CancellationToken))
         {
-            return await ipfs.DownloadBytesAsync("block/get", cancel, id);
+            return await ipfs.DownloadBytesAsync("block/get", cancel, id).ConfigureAwait(false);
         }
 
         public async Task<Cid> PutAsync(
@@ -39,7 +39,7 @@ namespace Ipfs.Http
                 options.Add($"format={contentType}");
                 options.Add($"cid-base={encoding}");
             }
-            var json = await ipfs.UploadAsync("block/put", cancel, data, options.ToArray());
+            var json = await ipfs.UploadAsync("block/put", cancel, data, options.ToArray()).ConfigureAwait(false);
             var info = JObject.Parse(json);
             Cid cid = (string)info["Key"];
 
@@ -68,7 +68,7 @@ namespace Ipfs.Http
                 options.Add($"format={contentType}");
                 options.Add($"cid-base={encoding}");
             }
-            var json = await ipfs.UploadAsync("block/put", cancel, data, null, options.ToArray());
+            var json = await ipfs.UploadAsync("block/put", cancel, data, null, options.ToArray()).ConfigureAwait(false);
             var info = JObject.Parse(json);
             Cid cid = (string)info["Key"];
 
@@ -93,7 +93,7 @@ namespace Ipfs.Http
 
         public async Task<Cid> RemoveAsync(Cid id, bool ignoreNonexistent = false, CancellationToken cancel = default(CancellationToken))
         {
-            var json = await ipfs.DoCommandAsync("block/rm", cancel, id, "force=" + ignoreNonexistent.ToString().ToLowerInvariant());
+            var json = await ipfs.DoCommandAsync("block/rm", cancel, id, "force=" + ignoreNonexistent.ToString().ToLowerInvariant()).ConfigureAwait(false);
             if (json.Length == 0)
                 return null;
             var result = JObject.Parse(json);

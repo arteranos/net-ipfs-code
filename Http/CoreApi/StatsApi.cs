@@ -16,14 +16,14 @@ namespace Ipfs.Http
             this.ipfs = ipfs;
         }
 
-        public Task<BandwidthData> BandwidthAsync(CancellationToken cancel = default(CancellationToken))
+        public async Task<BandwidthData> BandwidthAsync(CancellationToken cancel = default(CancellationToken))
         {
-            return ipfs.DoCommandAsync<BandwidthData>("stats/bw", cancel);
+            return await ipfs.DoCommandAsync<BandwidthData>("stats/bw", cancel).ConfigureAwait(false);
         }
 
         public async Task<BitswapData> BitswapAsync(CancellationToken cancel = default(CancellationToken))
         {
-            var json = await ipfs.DoCommandAsync("stats/bitswap", cancel);
+            var json = await ipfs.DoCommandAsync("stats/bitswap", cancel).ConfigureAwait(false);
             var stat = JObject.Parse(json);
             return new BitswapData
             {
@@ -39,9 +39,9 @@ namespace Ipfs.Http
             };
         }
 
-        public Task<RepositoryData> RepositoryAsync(CancellationToken cancel = default(CancellationToken))
+        public async Task<RepositoryData> RepositoryAsync(CancellationToken cancel = default(CancellationToken))
         {
-            return ipfs.DoCommandAsync<RepositoryData>("stats/repo", cancel);
+            return await ipfs.DoCommandAsync<RepositoryData>("stats/repo", cancel).ConfigureAwait(false);
         }
 
 

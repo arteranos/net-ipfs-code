@@ -28,13 +28,13 @@ namespace Ipfs.Http
             if (parents.HasValue)
                 args.Add($"parents={parents.Value.ToString().ToLower()}");
 
-            await ipfs.DoCommandAsync("files/cp", cancel, sourceMfsPathOrCid, args.ToArray());
+            await ipfs.DoCommandAsync("files/cp", cancel, sourceMfsPathOrCid, args.ToArray()).ConfigureAwait(false);
         }
 
         /// <inheritdoc />
         public async Task<Cid> FlushAsync(string path = null, CancellationToken cancel = default)
         {
-            var json = await ipfs.DoCommandAsync("files/flush", cancel, path);
+            var json = await ipfs.DoCommandAsync("files/flush", cancel, path).ConfigureAwait(false);
             var r = JObject.Parse(json);
             string cid = (string)r["Cid"];
             return (Cid)cid;
@@ -49,7 +49,7 @@ namespace Ipfs.Http
 
             IEnumerable<IFileSystemNode> nodes = null;
 
-            var json = await ipfs.DoCommandAsync("files/ls", cancel, path, args.ToArray());
+            var json = await ipfs.DoCommandAsync("files/ls", cancel, path, args.ToArray()).ConfigureAwait(false);
             var r = JObject.Parse(json);
             var links = r["Entries"] as JArray;
             if (links != null)
@@ -79,14 +79,14 @@ namespace Ipfs.Http
             if (!string.IsNullOrWhiteSpace(multiHash))
                 args.Add($"hash={multiHash}");
 
-            await ipfs.DoCommandAsync("files/mkdir", cancel, path, args.ToArray());
+            await ipfs.DoCommandAsync("files/mkdir", cancel, path, args.ToArray()).ConfigureAwait(false);
         }
 
         /// <inheritdoc />
         public async Task MoveAsync(string sourceMfsPath, string destMfsPath, CancellationToken cancel = default)
         {
             var args = new string[] { $"arg={destMfsPath}" };
-            await ipfs.DoCommandAsync("files/mv", cancel, sourceMfsPath, args);
+            await ipfs.DoCommandAsync("files/mv", cancel, sourceMfsPath, args).ConfigureAwait(false);
         }
 
         /// <inheritdoc />
@@ -101,7 +101,7 @@ namespace Ipfs.Http
             if (offset != null)
                 args.Add($"count={count.Value}");
 
-            using (var data = await ipfs.PostDownloadAsync("files/read", cancel, path, args?.ToArray()))
+            using (var data = await ipfs.PostDownloadAsync("files/read", cancel, path, args?.ToArray()).ConfigureAwait(false))
             using (var text = new StreamReader(data))
             {
                 return await text.ReadToEndAsync();
@@ -120,7 +120,7 @@ namespace Ipfs.Http
             if (offset != null)
                 args.Add($"count={count.Value}");
 
-            return await ipfs.PostDownloadAsync("files/read", cancel, path, args?.ToArray());
+            return await ipfs.PostDownloadAsync("files/read", cancel, path, args?.ToArray()).ConfigureAwait(false);
         }
 
         /// <inheritdoc />
@@ -132,13 +132,13 @@ namespace Ipfs.Http
             if (force.HasValue)
                 args.Add($"force={force.Value.ToString().ToLower()}");
 
-            await ipfs.DoCommandAsync("files/rm", cancel, path, args.ToArray());
+            await ipfs.DoCommandAsync("files/rm", cancel, path, args.ToArray()).ConfigureAwait(false);
         }
 
         /// <inheritdoc />
         public async Task<FileStatResult> StatAsync(string path, CancellationToken cancel = default)
         {
-            var json = await ipfs.DoCommandAsync("files/stat", cancel, path);
+            var json = await ipfs.DoCommandAsync("files/stat", cancel, path).ConfigureAwait(false);
             return (FileStatResult)FileStatResultFromJson(json);
         }
 
@@ -146,7 +146,7 @@ namespace Ipfs.Http
         public async Task<FileStatWithLocalityResult> StatAsync(string path, bool withLocal, CancellationToken cancel = default)
         {
             var args = new string[] { $"with-local={withLocal.ToString().ToLower()}" };
-            var json = await ipfs.DoCommandAsync("files/stat", cancel, path, args.ToArray());
+            var json = await ipfs.DoCommandAsync("files/stat", cancel, path, args.ToArray()).ConfigureAwait(false);
             return FileStatResultFromJson(json);
         }
 
@@ -219,7 +219,7 @@ namespace Ipfs.Http
             if (string.IsNullOrEmpty(path) || !path.StartsWith("/"))
                 throw new ArgumentException("Argument path must specify a filename.");
 
-            await ipfs.Upload2Async("files/write", cancel, data, name, opts.ToArray());
+            await ipfs.Upload2Async("files/write", cancel, data, name, opts.ToArray()).ConfigureAwait(false);
         }
     }
 }

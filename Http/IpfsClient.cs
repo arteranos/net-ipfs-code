@@ -278,8 +278,8 @@ namespace Ipfs.Http
 
             using (var response = await Api().PostAsync(url, null, cancel).ConfigureAwait(false))
             {
-                await ThrowOnErrorAsync(response);
-                var body = await response.Content.ReadAsStringAsync();
+                await ThrowOnErrorAsync(response).ConfigureAwait(false);
+                var body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
                 return body;
             }
@@ -302,10 +302,10 @@ namespace Ipfs.Http
 
         internal async Task DoCommandAsync(Uri url, HttpContent content, CancellationToken cancel)
         {
-            using (var response = await Api().PostAsync(url, new MultipartFormDataContent { { content, "\"file\"" } }, cancel))
+            using (var response = await Api().PostAsync(url, new MultipartFormDataContent { { content, "\"file\"" } }, cancel).ConfigureAwait(false))
             {
-                await ThrowOnErrorAsync(response);
-                var body = await response.Content.ReadAsStringAsync();
+                await ThrowOnErrorAsync(response).ConfigureAwait(false);
+                var body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             }
         }
 
@@ -342,7 +342,7 @@ namespace Ipfs.Http
         /// </exception>
         public async Task<T> DoCommandAsync<T>(string command, CancellationToken cancel, string arg = null, params string[] options)
         {
-            var json = await DoCommandAsync(command, cancel, arg, options);
+            var json = await DoCommandAsync(command, cancel, arg, options).ConfigureAwait(false);
             return JsonConvert.DeserializeObject<T>(json);
         }
 
@@ -373,11 +373,11 @@ namespace Ipfs.Http
             var url = BuildCommand(command, arg, options);
 
             var request = new HttpRequestMessage(HttpMethod.Post, url);
-            var response = await Api().SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancel);
+            var response = await Api().SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancel).ConfigureAwait(false);
 
-            await ThrowOnErrorAsync(response);
+            await ThrowOnErrorAsync(response).ConfigureAwait(false);
 
-            return await response.Content.ReadAsStreamAsync();
+            return await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -407,10 +407,10 @@ namespace Ipfs.Http
         {
             var url = BuildCommand(command, arg, options);
 
-            var response = await Api().GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancel);
-            await ThrowOnErrorAsync(response);
+            var response = await Api().GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancel).ConfigureAwait(false);
+            await ThrowOnErrorAsync(response).ConfigureAwait(false);
 
-            return await response.Content.ReadAsStreamAsync();
+            return await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -440,10 +440,10 @@ namespace Ipfs.Http
         {
             var url = BuildCommand(command, arg, options);
 
-            var response = await Api().GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancel);
-            await ThrowOnErrorAsync(response);
+            var response = await Api().GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancel).ConfigureAwait(false);
+            await ThrowOnErrorAsync(response).ConfigureAwait(false);
 
-            return await response.Content.ReadAsByteArrayAsync();
+            return await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -488,10 +488,10 @@ namespace Ipfs.Http
 
             var url = BuildCommand(command, null, options);
 
-            using (var response = await Api().PostAsync(url, content, cancel))
+            using (var response = await Api().PostAsync(url, content, cancel).ConfigureAwait(false))
             {
-                await ThrowOnErrorAsync(response);
-                var json = await response.Content.ReadAsStringAsync();
+                await ThrowOnErrorAsync(response).ConfigureAwait(false);
+                var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
                 return json;
             }
@@ -535,10 +535,10 @@ namespace Ipfs.Http
 
             var url = BuildCommand(command, null, options);
 
-            var response = await Api().PostAsync(url, content, cancel);
-            await ThrowOnErrorAsync(response);
+            var response = await Api().PostAsync(url, content, cancel).ConfigureAwait(false);
+            await ThrowOnErrorAsync(response).ConfigureAwait(false);
 
-            return await response.Content.ReadAsStreamAsync();
+            return await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -554,11 +554,11 @@ namespace Ipfs.Http
 
             var url = BuildCommand(command, null, options);
 
-            using (var response = await Api().PostAsync(url, content, cancel))
+            using (var response = await Api().PostAsync(url, content, cancel).ConfigureAwait(false))
             {
-                await ThrowOnErrorAsync(response);
+                await ThrowOnErrorAsync(response).ConfigureAwait(false);
 
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
                 return json;
             }
@@ -587,7 +587,7 @@ namespace Ipfs.Http
                 throw new HttpRequestException(error);
             }
 
-            var body = await response.Content.ReadAsStringAsync();
+            var body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             string message = body;
 

@@ -25,14 +25,14 @@ namespace Ipfs.Http
 
         public async Task<DagNode> NewAsync(string template = null, CancellationToken cancel = default(CancellationToken))
         {
-            var json = await ipfs.DoCommandAsync("object/new", cancel, template);
+            var json = await ipfs.DoCommandAsync("object/new", cancel, template).ConfigureAwait(false);
             var hash = (string)(JObject.Parse(json)["Hash"]);
             return await GetAsync(hash);
         }
 
         public async Task<DagNode> GetAsync(Cid id, CancellationToken cancel = default(CancellationToken))
         {
-            var json = await ipfs.DoCommandAsync("object/get", cancel, id);
+            var json = await ipfs.DoCommandAsync("object/get", cancel, id).ConfigureAwait(false);
             return GetDagFromJson(json);
         }
 
@@ -43,7 +43,7 @@ namespace Ipfs.Http
 
         public async Task<DagNode> PutAsync(DagNode node, CancellationToken cancel = default(CancellationToken))
         {
-            var json = await ipfs.UploadAsync("object/put", cancel, node.ToArray(), "inputenc=protobuf");
+            var json = await ipfs.UploadAsync("object/put", cancel, node.ToArray(), "inputenc=protobuf").ConfigureAwait(false);
             return node;
         }
 
@@ -77,7 +77,7 @@ namespace Ipfs.Http
 
         public async Task<ObjectStat> StatAsync(Cid id, CancellationToken cancel = default(CancellationToken))
         {
-            var json = await ipfs.DoCommandAsync("object/stat", cancel, id);
+            var json = await ipfs.DoCommandAsync("object/stat", cancel, id).ConfigureAwait(false);
             var r = JObject.Parse(json);
 
             return new ObjectStat

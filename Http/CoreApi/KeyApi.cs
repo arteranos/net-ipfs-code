@@ -37,7 +37,7 @@ namespace Ipfs.Http
 
         public async Task<IKey> CreateAsync(string name, string keyType, int size, CancellationToken cancel = default(CancellationToken))
         {
-            var json = await ipfs.DoCommandAsync("key/gen", cancel, name, $"type={keyType}", $"size={size}", "ipns-base=base36");
+            var json = await ipfs.DoCommandAsync("key/gen", cancel, name, $"type={keyType}", $"size={size}", "ipns-base=base36").ConfigureAwait(false);
             var jobject = JObject.Parse(json);
 
             string id = (string)jobject["Id"];
@@ -52,7 +52,7 @@ namespace Ipfs.Http
 
         public async Task<IEnumerable<IKey>> ListAsync(CancellationToken cancel = default(CancellationToken))
         {
-            var json = await ipfs.DoCommandAsync("key/list", cancel, null, "l=true", "ipns-base=base36");
+            var json = await ipfs.DoCommandAsync("key/list", cancel, null, "l=true", "ipns-base=base36").ConfigureAwait(false);
             var keys = (JArray)(JObject.Parse(json)["Keys"]);
 
             return keys
@@ -71,7 +71,7 @@ namespace Ipfs.Http
 
         public async Task<IKey> RemoveAsync(string name, CancellationToken cancel = default(CancellationToken))
         {
-            var json = await ipfs.DoCommandAsync("key/rm", cancel, name, "ipns-base=base36");
+            var json = await ipfs.DoCommandAsync("key/rm", cancel, name, "ipns-base=base36").ConfigureAwait(false);
             var keys = JObject.Parse(json)["Keys"] as JArray;
 
             return keys?
@@ -91,7 +91,7 @@ namespace Ipfs.Http
 
         public async Task<IKey> RenameAsync(string oldName, string newName, CancellationToken cancel = default(CancellationToken))
         {
-            var json = await ipfs.DoCommandAsync("key/rename", cancel, oldName, $"arg={newName}", "ipns-base=base36");
+            var json = await ipfs.DoCommandAsync("key/rename", cancel, oldName, $"arg={newName}", "ipns-base=base36").ConfigureAwait(false);
             var jobject = JObject.Parse(json);
 
             string id = (string)jobject["Id"];

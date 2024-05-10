@@ -18,20 +18,20 @@ namespace Ipfs.Http
 
         public async Task<JObject> GetAsync(CancellationToken cancel = default(CancellationToken))
         {
-            var json = await ipfs.DoCommandAsync("config/show", cancel);
+            var json = await ipfs.DoCommandAsync("config/show", cancel).ConfigureAwait(false);
             return JObject.Parse(json);
         }
 
         public async Task<JToken> GetAsync(string key, CancellationToken cancel = default(CancellationToken))
         {
-            var json = await ipfs.DoCommandAsync("config", cancel, key);
+            var json = await ipfs.DoCommandAsync("config", cancel, key).ConfigureAwait(false);
             var r = JObject.Parse(json);
             return r["Value"];
         }
 
         public async Task SetAsync(string key, string value, CancellationToken cancel = default(CancellationToken))
         {
-            var _ = await ipfs.DoCommandAsync("config", cancel, key, "arg=" + value);
+            var _ = await ipfs.DoCommandAsync("config", cancel, key, "arg=" + value).ConfigureAwait(false);
             return;
         }
 
@@ -40,7 +40,7 @@ namespace Ipfs.Http
             var _ = await ipfs.DoCommandAsync("config", cancel,
                 key,
                 "arg=" + value.ToString(Formatting.None),
-                "json=true");
+                "json=true").ConfigureAwait(false);
             return;
         }
 

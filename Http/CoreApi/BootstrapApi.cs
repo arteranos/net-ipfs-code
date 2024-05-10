@@ -18,7 +18,7 @@ namespace Ipfs.Http
 
         public async Task<MultiAddress> AddAsync(MultiAddress address, CancellationToken cancel = default(CancellationToken))
         {
-            var json = await ipfs.DoCommandAsync("bootstrap/add", cancel, address.ToString());
+            var json = await ipfs.DoCommandAsync("bootstrap/add", cancel, address.ToString()).ConfigureAwait(false);
             var addrs = (JArray)(JObject.Parse(json)["Peers"]);
             var a = addrs.FirstOrDefault();
             if (a == null)
@@ -28,7 +28,7 @@ namespace Ipfs.Http
 
         public async Task<IEnumerable<MultiAddress>> AddDefaultsAsync(CancellationToken cancel = default(CancellationToken))
         {
-            var json = await ipfs.DoCommandAsync("bootstrap/add/default", cancel);
+            var json = await ipfs.DoCommandAsync("bootstrap/add/default", cancel).ConfigureAwait(false);
             var addrs = (JArray)(JObject.Parse(json)["Peers"]);
             return addrs
                 .Select(a => MultiAddress.TryCreate((string)a))
@@ -37,7 +37,7 @@ namespace Ipfs.Http
 
         public async Task<IEnumerable<MultiAddress>> ListAsync(CancellationToken cancel = default(CancellationToken))
         {
-            var json = await ipfs.DoCommandAsync("bootstrap/list", cancel);
+            var json = await ipfs.DoCommandAsync("bootstrap/list", cancel).ConfigureAwait(false);
             var addrs = (JArray)(JObject.Parse(json)["Peers"]);
             return addrs
                 .Select(a => MultiAddress.TryCreate((string)a))
@@ -51,7 +51,7 @@ namespace Ipfs.Http
 
         public async Task<MultiAddress> RemoveAsync(MultiAddress address, CancellationToken cancel = default(CancellationToken))
         {
-            var json = await ipfs.DoCommandAsync("bootstrap/rm", cancel, address.ToString());
+            var json = await ipfs.DoCommandAsync("bootstrap/rm", cancel, address.ToString()).ConfigureAwait(false);
             var addrs = (JArray)(JObject.Parse(json)["Peers"]);
             var a = addrs.FirstOrDefault();
             if (a == null)
