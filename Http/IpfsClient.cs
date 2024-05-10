@@ -276,7 +276,7 @@ namespace Ipfs.Http
         {
             var url = BuildCommand(command, arg, options);
 
-            using (var response = await Api().PostAsync(url, null, cancel))
+            using (var response = await Api().PostAsync(url, null, cancel).ConfigureAwait(false))
             {
                 await ThrowOnErrorAsync(response);
                 var body = await response.Content.ReadAsStringAsync();

@@ -82,7 +82,7 @@ namespace Ipfs.Http
 
         public async Task<IDataBlock> StatAsync(Cid id, CancellationToken cancel = default(CancellationToken))
         {
-            var json = await ipfs.DoCommandAsync("block/stat", cancel, id);
+            var json = await ipfs.DoCommandAsync("block/stat", cancel, id).ConfigureAwait(false);
             var info = JObject.Parse(json);
             return new Block
             {

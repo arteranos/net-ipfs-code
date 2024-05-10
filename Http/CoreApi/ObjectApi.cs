@@ -54,7 +54,7 @@ namespace Ipfs.Http
 
         public async Task<IEnumerable<IMerkleLink>> LinksAsync(Cid id, CancellationToken cancel = default(CancellationToken))
         {
-            var json = await ipfs.DoCommandAsync("object/links", cancel, id);
+            var json = await ipfs.DoCommandAsync("object/links", cancel, id).ConfigureAwait(false);
             return GetDagFromJson(json).Links;
         }
 
