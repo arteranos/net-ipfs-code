@@ -136,19 +136,41 @@ namespace Ipfs.Http
             var links = nodes.Select(node => node.ToLink());
 #endif
             // Create the directory with links to the created files and sub-directories
-            var folder = emptyFolder.Value.AddLinks(links);
-            var directory = await ipfs.Object.PutAsync(folder, cancel).ConfigureAwait(false);
+            FileSystemNode fsn = await CreateDirectoryAsync(links, options, cancel);
+
+            fsn.Name = Path.GetFileName(path);
+
+            return fsn;
+        }
+
+        async Task<FileSystemNode> CreateDirectoryAsync(IEnumerable<IFileSystemLink> links, AddFileOptions options, CancellationToken cancel)
+        {
+            void AddFileLink(List<JToken> linkList, IFileSystemLink node)
+            {
+                JToken newLink = JToken.Parse(@"{ ""Hash"": { ""/"": """" }, ""Name"": """", ""Tsize"": 0 }");
+                newLink["Hash"]["/"] = node.Id.ToString();
+                newLink["Name"] = node.Name;
+                newLink["Tsize"] = node.Size;
+
+                linkList.Add(newLink);
+            }
+
+            JToken dir = JToken.Parse(@"{ ""Data"": { ""/"": { ""bytes"": ""CAE"" } }, ""Links"": [] }");
+            List<JToken> linkList = new();
+            foreach (var link in links)
+                AddFileLink(linkList, link);
+
+            dir["Links"] = JToken.FromObject(linkList);
+            var id = await ipfs.Dag.PutAsync(dir, "dag-pb").ConfigureAwait(false);
 
             return new FileSystemNode
             {
-                Id = directory.Id,
-                Name = Path.GetFileName(path),
+                Id = id,
                 Links = links,
-                IsDirectory = true,
-                Size = directory.Size,
+                IsDirectory = true
             };
-
         }
+
 
         /// <summary>
         ///   Reads the content of an existing IPFS file as text.

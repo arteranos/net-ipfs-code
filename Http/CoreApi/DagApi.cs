@@ -38,7 +38,7 @@ namespace Ipfs.Http
                     serializer.Serialize(jw, data);
                 }
                 ms.Position = 0;
-                return await PutAsync(ms, contentType, multiHash, encoding, pin, cancel);
+                return await PutAsync(ms, contentType, multiHash, encoding, pin, cancel).ConfigureAwait(false);
             }
         }
 
@@ -54,7 +54,7 @@ namespace Ipfs.Http
                 Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data)),
                 false))
             {
-                return await PutAsync(ms, contentType, multiHash, encoding, pin, cancel);
+                return await PutAsync(ms, contentType, multiHash, encoding, pin, cancel).ConfigureAwait(false);
             }
         }
 
@@ -68,7 +68,7 @@ namespace Ipfs.Http
         {
             var json = await ipfs.UploadAsync("dag/put", cancel,
                 data, null,
-                $"format={contentType}",
+                $"store-codec={contentType}",
                 $"pin={pin.ToString().ToLowerInvariant()}",
                 $"hash={multiHash}",
                 $"cid-base={encoding}").ConfigureAwait(false);

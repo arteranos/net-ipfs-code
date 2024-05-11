@@ -13,7 +13,7 @@ namespace Ipfs.Http
 
         /// <inheritdoc />
         [DataMember]
-        public IEnumerable<IFileSystemLink> Links { get; set; } /*= [];*/
+        public IEnumerable<IFileSystemLink> Links { get; set; }
 
         /// <summary>
         ///   Size of the file contents.
