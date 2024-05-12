@@ -68,6 +68,7 @@ namespace Ipfs.Http
             // The result is a stream of LDJSON objects.
             // See https://github.com/ipfs/go-ipfs/issues/4852
             FileSystemNode fsn = null;
+            FileSystemNode previousFsn = null;
             using (var sr = new StreamReader(response))
             using (var jr = new JsonTextReader(sr) { SupportMultipleContent = true })
             {
@@ -94,8 +95,15 @@ namespace Ipfs.Http
                             Size = long.Parse((string)r["Size"]),
                             IsDirectory = false,
                             Name = name,
+                            Links = Enumerable.Empty<FileSystemLink>(),
                         };
+
+                        // Wrapping/Chaining: Previous node will link to the current node.
+                        if (previousFsn != null)
+                            fsn.Links = fsn.Links.Append(previousFsn.ToLink());
                     }
+
+                    previousFsn = fsn;
                 }
             }
 

@@ -28,6 +28,10 @@ namespace Ipfs.Http
         {
             var json = await ipfs.DoCommandAsync("pin/ls", cancel).ConfigureAwait(false);
             var keys = (JObject)(JObject.Parse(json)["Keys"]);
+
+            // The daemon could return an empty object, not an empty Keys field, if there aren't pins.
+            if (keys == null) return Enumerable.Empty<Cid>();
+
             return keys
                 .Properties()
                 .Select(p => (Cid)p.Name);
