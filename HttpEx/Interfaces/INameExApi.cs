@@ -13,5 +13,11 @@ namespace Ipfs.Http
             TimeSpan? ttl = null,
             CancellationToken cancel = default(CancellationToken));
 
+        public Task<NamedContent> PublishAsync(Cid id,
+            string key = "self",
+            TimeSpan? lifetime = null,
+            TimeSpan? ttl = null,
+            CancellationToken cancel = default(CancellationToken));
+
     }
 }

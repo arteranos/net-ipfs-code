@@ -15,6 +15,11 @@ namespace Ipfs.Http
             this.ipfs = ipfsClientEx;
         }
 
+        public Task<NamedContent> PublishAsync(Cid id, string key = "self", TimeSpan? lifetime = null, TimeSpan? ttl = null, CancellationToken cancel = default)
+        {
+            return PublishAsync("/ipfs/" + id.Encode(), false, key, lifetime, ttl, cancel);
+        }
+
         public async Task<NamedContent> PublishAsync(string path, bool resolve = true, string key = "self", TimeSpan? lifetime = null, TimeSpan? ttl = null, CancellationToken cancel = default)
         {
             lifetime ??= new TimeSpan(2, 0, 0, 0);
