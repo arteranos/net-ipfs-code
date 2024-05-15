@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -63,6 +64,6 @@ namespace Ipfs.ExtendedApi
         /// <returns>
         ///   Filtered list of <see cref="IPAddress"/> to reach the peer
         /// </returns>
-        Task<IEnumerable<IPAddress>> FindPeerAddressesAsync(MultiHash id, CancellationToken cancel = default);
+        Task<IEnumerable<(IPAddress, ProtocolType, int)>> FindPeerAddressesAsync(MultiHash id, CancellationToken cancel = default);
     }
 }

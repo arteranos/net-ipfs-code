@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,28 +19,50 @@ namespace Ipfs.Http
             this.ipfs = ipfsClientEx;
         }
 
-        public async Task<IEnumerable<IPAddress>> FindPeerAddressesAsync(MultiHash id, CancellationToken cancel = default)
+        public async Task<IEnumerable<(IPAddress, ProtocolType, int)>> FindPeerAddressesAsync(MultiHash id, CancellationToken cancel = default)
         {
             Peer peer = await ipfs.IdAsync(id, cancel);
 
-            HashSet<IPAddress> addresses = new();
+            HashSet<(IPAddress, ProtocolType, int)> addresses = new();
             foreach (MultiAddress multiAddress in peer.Addresses)
             {
                 string[] parts = multiAddress.ToString().Split('/');
                 if (parts.Length < 2) continue;
                 if (parts[0] != string.Empty) continue;
 
-                IPAddress addr;
-                switch (parts[1])
+                IPAddress addr = IPAddress.None;
+                int port = -1;
+                ProtocolType type = ProtocolType.Unknown;
+
+                for (int i = 1;  i < parts.Length; i++) 
                 {
-                    case "ip4":
-                    case "ip6":
-                        addr = IPAddress.Parse(parts[2]); break;
-                    default:
-                        continue;
+                    switch (parts[i])
+                    {
+                        case "ip4":
+                        case "ip6":
+                            i++;
+                            addr = IPAddress.Parse(parts[i]); break;
+                        case "tcp":
+                            i++;
+                            type = ProtocolType.Tcp;
+                            port = int.Parse(parts[i]); break;
+                        case "udp":
+                            i++;
+                            type = ProtocolType.Udp;
+                            port = int.Parse(parts[i]); break;
+                        case "p2p":
+                        case "ipfs":
+                            i++;
+                            break;
+                        default: // Likely p2p-circuit, devaluing the information we got so far.
+                            addr = IPAddress.None;
+                            type = ProtocolType.Unknown;
+                            continue;
+                    }
                 }
 
-                addresses.Add(addr);
+                if (addr != IPAddress.None && type != ProtocolType.Unknown)
+                    addresses.Add((addr, type,port));
             }
             return addresses;
         }
