@@ -65,6 +65,11 @@ namespace Ipfs.Http
                     var json = sr.ReadLine();
 
                     var r = JObject.Parse(json);
+
+                    // Only direct provision, not by referral.
+                    var entryType = (int)r["Type"];
+                    if (entryType != 4) continue;
+
                     var id = (string)r["ID"];
                     if (id != String.Empty)
                     {
