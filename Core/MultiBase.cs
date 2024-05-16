@@ -33,7 +33,7 @@ namespace Ipfs
         /// </exception>
         private static MultiBaseAlgorithm GetAlgorithm(string name)
         {
-            if (MultiBaseAlgorithm.Names.TryGetValue(name, out MultiBaseAlgorithm? algorithm))
+            if (MultiBaseAlgorithm.Names.TryGetValue(name, out MultiBaseAlgorithm algorithm))
             {
                 return algorithm;
             }

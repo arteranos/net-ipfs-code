@@ -47,7 +47,7 @@ namespace Ipfs.CoreApi
         ///   A task that represents the asynchronous operation. The task's value is
         ///   a sequence of <see cref="Peer"/>.
         /// </returns>
-        Task<IEnumerable<Peer>> PeersAsync(string? topic = null, CancellationToken cancel = default);
+        Task<IEnumerable<Peer>> PeersAsync(string topic = null, CancellationToken cancel = default);
 
         /// <summary>
         ///   Publish a string message to a given topic.

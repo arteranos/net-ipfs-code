@@ -26,33 +26,33 @@ namespace Ipfs
         /// </summary>
         static NetworkProtocol()
         {
-            NetworkProtocol.Register<Ipv4NetworkProtocol>();
-            NetworkProtocol.Register<Ipv6NetworkProtocol>();
-            NetworkProtocol.Register<TcpNetworkProtocol>();
-            NetworkProtocol.Register<UdpNetworkProtocol>();
-            NetworkProtocol.Register<P2pNetworkProtocol>();
-            NetworkProtocol.RegisterAlias<IpfsNetworkProtocol>();
-            NetworkProtocol.Register<QuicNetworkProtocol>();
-            NetworkProtocol.Register<QuicV1NetworkProtocol>();
-            NetworkProtocol.Register<WebTransportNetworkProtocol>();
-            NetworkProtocol.Register<CertHashNetworkProtocol>();
-            NetworkProtocol.Register<HttpNetworkProtocol>();
-            NetworkProtocol.Register<HttpsNetworkProtocol>();
-            NetworkProtocol.Register<DccpNetworkProtocol>();
-            NetworkProtocol.Register<SctpNetworkProtocol>();
-            NetworkProtocol.Register<WsNetworkProtocol>();
-            NetworkProtocol.Register<Libp2pWebrtcStarNetworkProtocol>();
-            NetworkProtocol.Register<UdtNetworkProtocol>();
-            NetworkProtocol.Register<UtpNetworkProtocol>();
-            NetworkProtocol.Register<OnionNetworkProtocol>();
-            NetworkProtocol.Register<Libp2pWebrtcDirectNetworkProtocol>();
-            NetworkProtocol.Register<P2pCircuitNetworkProtocol>();
-            NetworkProtocol.Register<DnsNetworkProtocol>();
-            NetworkProtocol.Register<Dns4NetworkProtocol>();
-            NetworkProtocol.Register<Dns6NetworkProtocol>();
-            NetworkProtocol.Register<DnsAddrNetworkProtocol>();
-            NetworkProtocol.Register<WssNetworkProtocol>();
-            NetworkProtocol.Register<IpcidrNetworkProtocol>();
+            Register<Ipv4NetworkProtocol>();
+            Register<Ipv6NetworkProtocol>();
+            Register<TcpNetworkProtocol>();
+            Register<UdpNetworkProtocol>();
+            Register<P2pNetworkProtocol>();
+            RegisterAlias<IpfsNetworkProtocol>();
+            Register<QuicNetworkProtocol>();
+            Register<QuicV1NetworkProtocol>();
+            Register<WebTransportNetworkProtocol>();
+            Register<CertHashNetworkProtocol>();
+            Register<HttpNetworkProtocol>();
+            Register<HttpsNetworkProtocol>();
+            Register<DccpNetworkProtocol>();
+            Register<SctpNetworkProtocol>();
+            Register<WsNetworkProtocol>();
+            Register<Libp2pWebrtcStarNetworkProtocol>();
+            Register<UdtNetworkProtocol>();
+            Register<UtpNetworkProtocol>();
+            Register<OnionNetworkProtocol>();
+            Register<Libp2pWebrtcDirectNetworkProtocol>();
+            Register<P2pCircuitNetworkProtocol>();
+            Register<DnsNetworkProtocol>();
+            Register<Dns4NetworkProtocol>();
+            Register<Dns6NetworkProtocol>();
+            Register<DnsAddrNetworkProtocol>();
+            Register<WssNetworkProtocol>();
+            Register<IpcidrNetworkProtocol>();
         }
 
         /// <summary>
@@ -118,7 +118,7 @@ namespace Ipfs
         /// <remarks>
         ///   For tcp and udp this is the port number.  This can be <b>null</b> as is the case for http and https.
         /// </remarks>
-        public string? Value { get; set; }
+        public string Value { get; set; }
 
         /// <summary>
         ///   Writes the binary representation to the specified <see cref="Stream"/>.
@@ -244,7 +244,7 @@ namespace Ipfs
 
     internal abstract class IpNetworkProtocol : NetworkProtocol
     {
-        public IPAddress? Address { get; set; }
+        public IPAddress Address { get; set; }
         public override void ReadValue(TextReader stream)
         {
             base.ReadValue(stream);
@@ -254,7 +254,7 @@ namespace Ipfs
                 int i = Value!.LastIndexOf('%');
                 if (i != -1)
                 {
-                    Value = Value.Substring(0, i);
+                    Value = Value[..i];
                 }
 
                 Address = IPAddress.Parse(Value);
@@ -324,7 +324,7 @@ namespace Ipfs
 
     internal class P2pNetworkProtocol : NetworkProtocol
     {
-        public MultiHash? MultiHash { get; private set; }
+        public MultiHash MultiHash { get; private set; }
         public override string Name => "p2p";
         public override uint Code => 421;
 
@@ -512,7 +512,7 @@ namespace Ipfs
 
     internal abstract class DomainNameNetworkProtocol : NetworkProtocol
     {
-        public string? DomainName { get; set; }
+        public string DomainName { get; set; }
         public override void ReadValue(TextReader stream)
         {
             base.ReadValue(stream);

@@ -53,7 +53,7 @@ namespace Ipfs.CoreApi
         Task<IEnumerable<Peer>> FindProvidersAsync(
             Cid id,
             int limit = 20,
-            Action<Peer>? providerFound = null,
+            Action<Peer> providerFound = null,
             CancellationToken cancel = default);
     }
 }

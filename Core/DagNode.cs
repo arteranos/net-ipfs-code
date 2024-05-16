@@ -11,19 +11,19 @@ namespace Ipfs
     ///   A node in the IPFS Merkle DAG.
     /// </summary>
     /// <remarks>
-    ///   A <b>DagNode</b> has opaque <see cref="DagNode.DataBytes"/>
-    ///   and a set of navigable <see cref="DagNode.Links"/>.
+    ///   A <b>DagNode</b> has opaque <see cref="DataBytes"/>
+    ///   and a set of navigable <see cref="Links"/>.
     /// </remarks>
     [DataContract]
     public class DagNode : IMerkleNode<IMerkleLink>
     {
-        private Cid? _id;
+        private Cid _id;
         private string _hashAlgorithm = MultiHash.DefaultAlgorithmName;
         private long? _size;
 
         /// <summary>
         ///   Create a new instance of a <see cref="DagNode"/> with the specified
-        ///   <see cref="DagNode.DataBytes"/> and <see cref="DagNode.Links"/>
+        ///   <see cref="DataBytes"/> and <see cref="Links"/>
         /// </summary>
         /// <param name="data">
         ///   The opaque data, can be <b>null</b>.
@@ -35,7 +35,7 @@ namespace Ipfs
         ///   The name of the hashing algorithm to use; defaults to 
         ///   <see cref="MultiHash.DefaultAlgorithmName"/>.
         /// </param>
-        public DagNode(byte[]? data, IEnumerable<IMerkleLink>? links = null, string hashAlgorithm = MultiHash.DefaultAlgorithmName)
+        public DagNode(byte[] data, IEnumerable<IMerkleLink> links = null, string hashAlgorithm = MultiHash.DefaultAlgorithmName)
         {
             DataBytes = data ?? Array.Empty<byte>();
             Links = (links ?? Array.Empty<DagLink>())

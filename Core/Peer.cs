@@ -22,7 +22,7 @@ namespace Ipfs
         ///   <see cref="PublicKey"/>.
         /// </value>
         /// <seealso href="https://github.com/libp2p/specs/pull/100"/>
-        public MultiHash? Id { get; set; }
+        public MultiHash Id { get; set; }
 
         /// <summary>
         ///   The public key of the node.
@@ -35,7 +35,7 @@ namespace Ipfs
         ///   a type and the DER encoding of the PKCS Subject Public Key Info.
         /// </remarks>
         /// <seealso href="https://tools.ietf.org/html/rfc5280#section-4.1.2.7"/>
-        public string? PublicKey { get; set; }
+        public string PublicKey { get; set; }
 
         /// <summary>
         ///   The multiple addresses of the node.
@@ -75,7 +75,7 @@ namespace Ipfs
         /// <value>
         ///   <b>null</b> when the peer is not connected to.
         /// </value>
-        public MultiAddress? ConnectedAddress { get; set; }
+        public MultiAddress ConnectedAddress { get; set; }
 
         /// <summary>
         /// The round-trip time it takes to get data from the peer.
@@ -112,7 +112,7 @@ namespace Ipfs
         }
 
         /// <inheritdoc />
-        public override bool Equals(object? obj)
+        public override bool Equals(object obj)
         {
             return (obj is Peer that) && Equals(that);
         }
@@ -123,9 +123,9 @@ namespace Ipfs
         /// <summary>
         ///   Value equality.
         /// </summary>
-        public static bool operator ==(Peer? a, Peer? b)
+        public static bool operator ==(Peer a, Peer b)
         {
-            if (object.ReferenceEquals(a, b))
+            if (ReferenceEquals(a, b))
             {
                 return true;
             }
@@ -141,7 +141,7 @@ namespace Ipfs
         /// <summary>
         ///   Value inequality.
         /// </summary>
-        public static bool operator !=(Peer? a, Peer? b) => !(a == b);
+        public static bool operator !=(Peer a, Peer b) => !(a == b);
 
         /// <summary>
         ///   Returns the <see cref="Base58"/> encoding of the <see cref="Id"/>.

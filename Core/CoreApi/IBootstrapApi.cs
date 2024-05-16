@@ -31,7 +31,7 @@ namespace Ipfs.CoreApi
         ///   the address that was added or <b>null</b> if the address is already
         ///   in the bootstrap list.
         /// </returns>
-        Task<MultiAddress?> AddAsync(MultiAddress address, CancellationToken cancel = default);
+        Task<MultiAddress> AddAsync(MultiAddress address, CancellationToken cancel = default);
 
         /// <summary>
         ///   Adds the default peers to the list.
@@ -72,7 +72,7 @@ namespace Ipfs.CoreApi
         ///   the address that was removed or <b>null</b> if the <paramref name="address"/>
         ///   is not in the bootstrap list.
         /// </returns>
-        Task<MultiAddress?> RemoveAsync(MultiAddress address, CancellationToken cancel = default);
+        Task<MultiAddress> RemoveAsync(MultiAddress address, CancellationToken cancel = default);
 
         /// <summary>
         ///   Remove all the peers.

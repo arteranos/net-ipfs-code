@@ -9,7 +9,6 @@
  */
 using System;
 
-#pragma warning disable IDE1006 // Naming Styles
 #pragma warning disable IDE0025 // Use expression body for property
 #pragma warning disable IDE0027 // Use expression body for accessor
 
@@ -26,7 +25,7 @@ namespace Ipfs.Cryptography
         public readonly ulong[] RoundConstants;
 
         protected ulong[] state = new ulong[5 * 5];  //1600 bits
-        protected byte[]? buffer;
+        protected byte[] buffer;
         protected int buffLength;
         protected int keccakR;
 

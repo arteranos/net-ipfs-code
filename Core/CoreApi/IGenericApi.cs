@@ -24,7 +24,7 @@ namespace Ipfs.CoreApi
         ///    A task that represents the asynchronous operation. The task's value is
         ///    the <see cref="Peer"/> information.
         /// </returns>
-        Task<Peer> IdAsync(MultiHash? peer = null, CancellationToken cancel = default);
+        Task<Peer> IdAsync(MultiHash peer = null, CancellationToken cancel = default);
 
         /// <summary>
         ///   Get the version information.

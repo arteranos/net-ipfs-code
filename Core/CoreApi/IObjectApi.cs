@@ -47,7 +47,7 @@ namespace Ipfs.CoreApi
         /// <remarks>
         ///  Caveat: So far, only UnixFS object layouts are supported.
         /// </remarks>
-        Task<DagNode> NewAsync(string? template = null, CancellationToken cancel = default);
+        Task<DagNode> NewAsync(string template = null, CancellationToken cancel = default);
 
         /// <summary>
         ///   Fetch a MerkleDAG node.
@@ -95,7 +95,7 @@ namespace Ipfs.CoreApi
         ///   A task that represents the asynchronous operation. The task's value
         ///   is a <see cref="DagNode"/>.
         /// </returns>
-        Task<DagNode> PutAsync(byte[] data, IEnumerable<IMerkleLink>? links = null, CancellationToken cancel = default);
+        Task<DagNode> PutAsync(byte[] data, IEnumerable<IMerkleLink> links = null, CancellationToken cancel = default);
 
         /// <summary>
         ///   Store a MerkleDAG node.

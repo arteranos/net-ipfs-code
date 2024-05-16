@@ -15,12 +15,12 @@ namespace Ipfs.CoreApi
         /// <summary>
         ///   The content that is wanted.
         /// </summary>
-        public IEnumerable<Cid>? Wantlist { get; set; }
+        public IEnumerable<Cid> Wantlist { get; set; }
 
         /// <summary>
         ///   The known peers.
         /// </summary>
-        public IEnumerable<MultiHash>? Peers { get; set; }
+        public IEnumerable<MultiHash> Peers { get; set; }
 
         /// <summary>
         ///   The number of blocks sent by other peers.

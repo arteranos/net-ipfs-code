@@ -139,7 +139,7 @@ namespace Ipfs.Registry
         /// <returns>
         ///   A new <see cref="HashingAlgorithm"/>.
         /// </returns>
-        public static HashingAlgorithm Register(string name, int code, int digestSize, Func<HashAlgorithm>? hasher = null)
+        public static HashingAlgorithm Register(string name, int code, int digestSize, Func<HashAlgorithm> hasher = null)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -272,7 +272,7 @@ namespace Ipfs.Registry
         {
             try
             {
-                return HashingAlgorithm.Names[name];
+                return Names[name];
             }
             catch (KeyNotFoundException)
             {

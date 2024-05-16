@@ -42,7 +42,7 @@ namespace Ipfs.CoreApi
         /// <returns>
         ///   <see cref="Cid"/> of the flushed path.
         /// </returns>
-        Task<Cid> FlushAsync(string? path = null, CancellationToken cancel = default);
+        Task<Cid> FlushAsync(string path = null, CancellationToken cancel = default);
 
         /// <summary>
         ///   List directories in the local mutable namespace.
@@ -58,9 +58,7 @@ namespace Ipfs.CoreApi
         /// <remarks>
         ///   Paramter long is ommitted and should always be passed as true in implementation.
         /// </remarks>
-#pragma warning disable IDE1006 // Naming Styles - keep capital U
         Task<IEnumerable<IFileSystemNode>> ListAsync(string path, bool? U = null, CancellationToken cancel = default);
-#pragma warning restore IDE1006 // Naming Styles
 
         /// <summary>
         ///   Make directories in the local mutable namespace.
@@ -81,7 +79,7 @@ namespace Ipfs.CoreApi
         /// <param name="cancel">
         ///   Is used to stop the task.  When cancelled, the <see cref="TaskCanceledException"/> is raised.
         /// </param>
-        Task MakeDirectoryAsync(string path, bool? parents = null, int? cidVersion = null, string? multiHash = null, CancellationToken cancel = default);
+        Task MakeDirectoryAsync(string path, bool? parents = null, int? cidVersion = null, string multiHash = null, CancellationToken cancel = default);
 
         /// <summary>
         ///    Move file or directory to another path in MFS.

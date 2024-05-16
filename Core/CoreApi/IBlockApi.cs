@@ -142,6 +142,6 @@ namespace Ipfs.CoreApi
         /// <remarks>
         ///   This removes the block from the local cache and does not affect other peers.
         /// </remarks>
-        Task<Cid?> RemoveAsync(Cid id, bool ignoreNonexistent = false, CancellationToken cancel = default);
+        Task<Cid> RemoveAsync(Cid id, bool ignoreNonexistent = false, CancellationToken cancel = default);
     }
 }

@@ -79,7 +79,7 @@ namespace Ipfs.CoreApi
         ///   the address filter that was added, or null if the IPFS layer did not return a MultiAddress result.
         /// </returns>
         /// <seealso href="https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing"/>
-        Task<MultiAddress?> AddAddressFilterAsync(MultiAddress address, bool persist = false, CancellationToken cancel = default);
+        Task<MultiAddress> AddAddressFilterAsync(MultiAddress address, bool persist = false, CancellationToken cancel = default);
 
         /// <summary>
         ///   List all the address filters.
@@ -115,7 +115,7 @@ namespace Ipfs.CoreApi
         ///   the address filter that was removed, or null of the address filter was not found.
         /// </returns>
         /// <seealso href="https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing"/>
-        Task<MultiAddress?> RemoveAddressFilterAsync(MultiAddress address, bool persist = false, CancellationToken cancel = default);
+        Task<MultiAddress> RemoveAddressFilterAsync(MultiAddress address, bool persist = false, CancellationToken cancel = default);
 
     }
 }

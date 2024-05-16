@@ -14,7 +14,7 @@ namespace Ipfs
         /// <param name="name">The name associated with the linked node.</param>
         /// <param name="id">The <see cref="Cid"/> of the linked node.</param>
         /// <param name="size">The serialised size (in bytes) of the linked node.</param>
-        public DagLink(string? name, Cid id, long size)
+        public DagLink(string name, Cid id, long size)
         {
             Name = name;
             Id = id;
@@ -62,7 +62,7 @@ namespace Ipfs
         }
 
         /// <inheritdoc />
-        public string? Name { get; private set; }
+        public string Name { get; private set; }
 
         /// <inheritdoc />
         public Cid Id { get; private set; }
@@ -103,16 +103,16 @@ namespace Ipfs
             stream.WriteInt64(Size);
         }
 
-        private (string?, Cid, long) Read(Stream stream)
+        private (string, Cid, long) Read(Stream stream)
         {
             using var cis = new CodedInputStream(stream, true);
             return Read(cis);
         }
 
-        private (string?, Cid, long) Read(CodedInputStream stream)
+        private (string, Cid, long) Read(CodedInputStream stream)
         {
-            string? name = null;
-            Cid? id = null;
+            string name = null;
+            Cid id = null;
             long size = 0;
             while (!stream.IsAtEnd)
             {

@@ -22,7 +22,7 @@ namespace Ipfs
     ///   </note>
     /// </remarks>
     /// <seealso href="https://github.com/ipld/cid"/>
-    [JsonConverter(typeof(Cid.CidJsonConverter))]
+    [JsonConverter(typeof(CidJsonConverter))]
     public class Cid : IEquatable<Cid>
     {
         /// <summary>
@@ -30,11 +30,11 @@ namespace Ipfs
         /// </summary>
         public const string DefaultContentType = "dag-pb";
         
-        private string? _encodedValue;
+        private string _encodedValue;
         private int _version;
         private string _encoding = MultiBase.DefaultAlgorithmName;
         private string _contentType = DefaultContentType;
-        private MultiHash? _hash;
+        private MultiHash _hash;
 
         /// <summary>
         ///   Throws if a property cannot be set.
@@ -232,7 +232,7 @@ namespace Ipfs
                     sb.Append(' ');
                     sb.Append(Hash.Algorithm.Name);
                     sb.Append(' ');
-                    sb.Append(MultiBase.Encode(Hash.ToArray(), Encoding).Substring(1));
+                    sb.Append(MultiBase.Encode(Hash.ToArray(), Encoding)[1..]);
                     return sb.ToString();
 
                 default:
@@ -279,7 +279,7 @@ namespace Ipfs
         ///   to an equivalent <see cref="Cid"/> object.
         /// </summary>
         /// <param name="input">
-        ///   The <see cref="Cid.Encode">CID encoded</see> string.
+        ///   The <see cref="Encode">CID encoded</see> string.
         /// </param>
         /// <returns>
         ///   A new <see cref="Cid"/> that is equivalent to <paramref name="input"/>.
@@ -503,7 +503,7 @@ namespace Ipfs
         }
 
         /// <inheritdoc />
-        public override bool Equals(object? obj)
+        public override bool Equals(object obj)
         {
             return (obj is Cid that) && Encode() == that.Encode();
         }
@@ -517,9 +517,9 @@ namespace Ipfs
         /// <summary>
         ///   Value equality.
         /// </summary>
-        public static bool operator ==(Cid? a, Cid? b)
+        public static bool operator ==(Cid a, Cid b)
         {
-            if (object.ReferenceEquals(a, b))
+            if (ReferenceEquals(a, b))
             {
                 return true;
             }
@@ -537,7 +537,7 @@ namespace Ipfs
         /// <summary>
         ///   Value inequality.
         /// </summary>
-        public static bool operator !=(Cid? a, Cid? b) => !(a == b);
+        public static bool operator !=(Cid a, Cid b) => !(a == b);
 
         /// <summary>
         ///   Implicit casting of a <see cref="string"/> to a <see cref="Cid"/>.
@@ -551,7 +551,7 @@ namespace Ipfs
         /// <remarks>
         ///    Equivalent to <code> Cid.Decode(s)</code>
         /// </remarks>
-        public static implicit operator Cid(string s) => Cid.Decode(s);
+        public static implicit operator Cid(string s) => Decode(s);
 
         /// <summary>
         ///   Implicit casting of a <see cref="Cid"/> to a <see cref="string"/>.
@@ -588,16 +588,16 @@ namespace Ipfs
             public override bool CanWrite => true;
 
             /// <inheritdoc />
-            public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
+            public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
             {
                 var cid = value as Cid;
                 writer.WriteValue(cid?.Encode());
             }
 
             /// <inheritdoc />
-            public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
+            public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
             {
-                return reader.Value is string s ? Cid.Decode(s) : null;
+                return reader.Value is string s ? Decode(s) : null;
             }
         }
     }

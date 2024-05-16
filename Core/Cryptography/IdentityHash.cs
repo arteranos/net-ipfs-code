@@ -5,7 +5,7 @@ namespace Ipfs.Cryptography
 {
     internal class IdentityHash : HashAlgorithm
     {
-        byte[]? digest;
+        byte[] digest;
 
         public override void Initialize()
         {

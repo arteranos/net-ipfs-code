@@ -27,7 +27,7 @@ namespace Ipfs
     ///   </para>
     /// </remarks>
     /// <seealso href="https://github.com/multiformats/multiaddr"/>
-    [JsonConverter(typeof(MultiAddress.Json))]
+    [JsonConverter(typeof(Json))]
     public class MultiAddress : IEquatable<MultiAddress>
     {
         /// <summary>
@@ -414,9 +414,9 @@ namespace Ipfs
         /// <summary>
         ///   Value equality.
         /// </summary>
-        public static bool operator ==(MultiAddress? a, MultiAddress? b)
+        public static bool operator ==(MultiAddress a, MultiAddress b)
         {
-            if (object.ReferenceEquals(a, b))
+            if (ReferenceEquals(a, b))
             {
                 return true;
             }
@@ -432,7 +432,7 @@ namespace Ipfs
         /// <summary>
         ///   Value inequality.
         /// </summary>
-        public static bool operator !=(MultiAddress? a, MultiAddress? b) => !(a == b);
+        public static bool operator !=(MultiAddress a, MultiAddress b) => !(a == b);
 
         /// <summary>
         ///   A sequence of <see cref="NetworkProtocol">network protocols</see> that is readable
@@ -478,7 +478,7 @@ namespace Ipfs
         /// <returns>
         ///   <b>null</b> if the string cannot be parsed; otherwise a <see cref="MultiAddress"/>.
         /// </returns>
-        public static MultiAddress? TryCreate(string s)
+        public static MultiAddress TryCreate(string s)
         {
             try
             {
@@ -500,7 +500,7 @@ namespace Ipfs
         /// <returns>
         ///   <b>null</b> if the bytes cannot be parsed; otherwise a <see cref="MultiAddress"/>.
         /// </returns>
-        public static MultiAddress? TryCreate(byte[] bytes)
+        public static MultiAddress TryCreate(byte[] bytes)
         {
             try
             {
@@ -526,13 +526,13 @@ namespace Ipfs
             }
             public override bool CanRead => true;
             public override bool CanWrite => true;
-            public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
+            public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
             {
                 var ma = value as MultiAddress;
                 writer.WriteValue(ma?.ToString());
             }
 
-            public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
+            public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
             {
                 return reader.Value is string s ? new MultiAddress(s) : null;
             }

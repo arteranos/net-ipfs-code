@@ -20,6 +20,6 @@ namespace Ipfs.CoreApi
         /// <summary>
         ///   The text to echo.
         /// </summary>
-        public string? Text { get; set; }
+        public string Text { get; set; }
     }
 }

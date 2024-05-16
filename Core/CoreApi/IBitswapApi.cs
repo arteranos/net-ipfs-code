@@ -40,7 +40,7 @@ namespace Ipfs.CoreApi
         ///   A task that represents the asynchronous operation. The task's value
         ///   contains the sequence of blocks needed by the <paramref name="peer"/>.
         /// </returns>
-        Task<IEnumerable<Cid>> WantsAsync(MultiHash? peer = null, CancellationToken cancel = default);
+        Task<IEnumerable<Cid>> WantsAsync(MultiHash peer = null, CancellationToken cancel = default);
 
         /// <summary>
         ///   Gets information on the blocks exchanged with a specific <see cref="Peer"/>.

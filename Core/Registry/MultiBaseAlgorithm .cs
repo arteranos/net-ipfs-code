@@ -149,8 +149,8 @@ namespace Ipfs.Registry
         public static MultiBaseAlgorithm Register(
             string name,
             char code,
-            Func<byte[], string>? encode = null,
-            Func<string, byte[]>? decode = null)
+            Func<byte[], string> encode = null,
+            Func<string, byte[]> decode = null)
         {
             if (string.IsNullOrWhiteSpace(name))
             {

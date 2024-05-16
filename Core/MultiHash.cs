@@ -17,13 +17,13 @@ namespace Ipfs
     ///   See the <see cref="HashingAlgorithm">registry</see> for supported algorithms.
     /// </remarks>
     /// <seealso href="https://github.com/jbenet/multihash"/>
-    [JsonConverter(typeof(MultiHash.Json))]
+    [JsonConverter(typeof(Json))]
     public class MultiHash : IEquatable<MultiHash>
     {
         /// <summary>
         ///   The cached base-58 encoding of the multihash.
         /// </summary>
-        private string? _b58String;
+        private string _b58String;
 
         /// <summary>
         ///   The default hashing algorithm is "sha2-256".
@@ -46,7 +46,7 @@ namespace Ipfs
         /// </exception>
         public static HashAlgorithm GetHashAlgorithm(string name = DefaultAlgorithmName)
         {
-            if (HashingAlgorithm.Names.TryGetValue(name, out HashingAlgorithm? hashAlgorithm))
+            if (HashingAlgorithm.Names.TryGetValue(name, out HashingAlgorithm hashAlgorithm))
             {
                 return hashAlgorithm.Hasher();
             }
@@ -69,7 +69,7 @@ namespace Ipfs
         /// </exception>
         public static string GetHashAlgorithmName(int code)
         {
-            if (HashingAlgorithm.Codes.TryGetValue(code, out HashingAlgorithm? hashingAlgorithm))
+            if (HashingAlgorithm.Codes.TryGetValue(code, out HashingAlgorithm hashingAlgorithm))
             {
                 return hashingAlgorithm.Name;
             }
@@ -80,7 +80,7 @@ namespace Ipfs
         /// <summary>
         ///   Occurs when an unknown hashing algorithm number is parsed.
         /// </summary>
-        public static EventHandler<UnknownHashingAlgorithmEventArgs>? UnknownHashingAlgorithm;
+        public static EventHandler<UnknownHashingAlgorithmEventArgs> UnknownHashingAlgorithm;
 
         /// <summary>
         ///   Creates a new instance of the <see cref="MultiHash"/> class with the
@@ -337,9 +337,9 @@ namespace Ipfs
         /// <summary>
         ///   Value equality.
         /// </summary>
-        public static bool operator ==(MultiHash? a, MultiHash? b)
+        public static bool operator ==(MultiHash a, MultiHash b)
         {
-            if (object.ReferenceEquals(a, b))
+            if (ReferenceEquals(a, b))
             {
                 return true;
             }
@@ -355,7 +355,7 @@ namespace Ipfs
         /// <summary>
         ///   Value inequality.
         /// </summary>
-        public static bool operator !=(MultiHash? a, MultiHash? b) => !(a == b);
+        public static bool operator !=(MultiHash a, MultiHash b) => !(a == b);
 
         /// <summary>
         ///   Returns the <see cref="Base58"/> encoding of the <see cref="MultiHash"/>.
@@ -522,13 +522,13 @@ namespace Ipfs
             }
             public override bool CanRead => true;
             public override bool CanWrite => true;
-            public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
+            public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
             {
                 var mh = value as MultiHash;
                 writer.WriteValue(mh?.ToString());
             }
 
-            public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
+            public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
             {
                 return reader.Value is string s ? new MultiHash(s) : null;
             }

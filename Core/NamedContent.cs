@@ -12,7 +12,7 @@
         /// <value>
         ///   Typically <c>/ipns/...</c>.
         /// </value>
-        public string? NamePath { get; set; }
+        public string NamePath { get; set; }
 
         /// <summary>
         ///   Path to the content.
@@ -20,6 +20,6 @@
         /// <value>
         ///   Typically <c>/ipfs/...</c>.
         /// </value>
-        public string? ContentPath { get; set; }
+        public string ContentPath { get; set; }
     }
 }

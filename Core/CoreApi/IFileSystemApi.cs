@@ -27,7 +27,7 @@ namespace Ipfs.CoreApi
         ///    A task that represents the asynchronous operation. The task's value is
         ///    the file's node.
         /// </returns>
-        Task<IFileSystemNode> AddFileAsync(string path, AddFileOptions? options = default, CancellationToken cancel = default);
+        Task<IFileSystemNode> AddFileAsync(string path, AddFileOptions options = default, CancellationToken cancel = default);
 
         /// <summary>
         ///   Add some text to the interplanetary file system.
@@ -45,7 +45,7 @@ namespace Ipfs.CoreApi
         ///   A task that represents the asynchronous operation. The task's value is
         ///   the text's node.
         /// </returns>
-        Task<IFileSystemNode> AddTextAsync(string text, AddFileOptions? options = default, CancellationToken cancel = default);
+        Task<IFileSystemNode> AddTextAsync(string text, AddFileOptions options = default, CancellationToken cancel = default);
 
         /// <summary>
         ///   Add a <see cref="Stream"/> to interplanetary file system.
@@ -66,7 +66,7 @@ namespace Ipfs.CoreApi
         ///   A task that represents the asynchronous operation. The task's value is
         ///   the data's node.
         /// </returns>
-        Task<IFileSystemNode> AddAsync(Stream stream, string name = "", AddFileOptions? options = default, CancellationToken cancel = default);
+        Task<IFileSystemNode> AddAsync(Stream stream, string name = "", AddFileOptions options = default, CancellationToken cancel = default);
 
         /// <summary>
         ///   Add a directory and its files to the interplanetary file system.
@@ -87,7 +87,7 @@ namespace Ipfs.CoreApi
         ///   A task that represents the asynchronous operation. The task's value is
         ///   the directory's node.
         /// </returns>
-        Task<IFileSystemNode> AddDirectoryAsync(string path, bool recursive = true, AddFileOptions? options = default, CancellationToken cancel = default);
+        Task<IFileSystemNode> AddDirectoryAsync(string path, bool recursive = true, AddFileOptions options = default, CancellationToken cancel = default);
 
         /// <summary>
         ///   Reads the content of an existing IPFS file as text.

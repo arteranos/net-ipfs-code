@@ -14,7 +14,7 @@ namespace Ipfs.CoreApi
         /// <value>
         ///   Typically, a relative file path.
         /// </value>
-        public string? Name { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
         ///   The cumuative number of bytes transferred for

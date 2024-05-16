@@ -6,7 +6,7 @@ namespace Ipfs.Cryptography
     internal class DoubleSha256 : HashAlgorithm
     {
         private readonly HashAlgorithm _digest = SHA256.Create();
-        private byte[]? _round1;
+        private byte[] _round1;
 
         public override void Initialize()
         {
