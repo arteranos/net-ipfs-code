@@ -290,6 +290,9 @@ namespace Ipfs
         /// <seealso cref="Encode"/>
         public static Cid Decode(string input)
         {
+            // Null is null. No doubt.
+            if (input == null) return null;
+
             try
             {
                 // SHA2-256 MultiHash is CID v0.
@@ -565,7 +568,7 @@ namespace Ipfs
         /// <remarks>
         ///    Equivalent to <code>Cid.Encode()</code>
         /// </remarks>
-        public static implicit operator string(Cid id) => id.Encode();
+        public static implicit operator string(Cid id) => id?.Encode();
 
         /// <summary>
         ///   Conversion of a <see cref="Cid"/> to and from JSON.
