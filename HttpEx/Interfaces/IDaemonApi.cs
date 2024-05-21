@@ -10,17 +10,6 @@ namespace Ipfs.ExtendedApi
     public interface IDaemonApi
     {
         /// <summary>
-        ///   Reads the daemon's private key
-        /// </summary>
-        /// <param name="repodir">
-        ///   The IPFS repo directory residing its configuration
-        /// </param>
-        /// <returns>
-        ///   The <see cref="PrivateKey"/> in the daemon's configuration file
-        /// </returns>
-        PrivateKey ReadDaemonPrivateKey(string repodir = null);
-
-        /// <summary>
         ///   Verify the daemon wether if it's ID matches to its private key
         ///   (e.g. replacing the daemon with a poisoned one)
         /// </summary>

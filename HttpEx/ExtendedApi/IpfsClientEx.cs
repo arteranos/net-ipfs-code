@@ -13,25 +13,40 @@ namespace Ipfs.Http
     {
         private IpfsClientEx ipfs => this;
 
-        public PrivateKey ReadDaemonPrivateKey(string repodir = null)
+        public static MultiAddress ReadDaemonAPIAddress(string repodir = null)
         {
-            if(repodir == null)
+            JObject c = ReadConfigFile(ref repodir);
+            JToken addresses = c["Addresses"];
+            string apiAddress = (string)addresses["API"];
+
+            return new MultiAddress(apiAddress);
+        }
+
+        public static PrivateKey ReadDaemonPrivateKey(string repodir = null)
+        {
+            JObject c = ReadConfigFile(ref repodir);
+            JToken identity = c["Identity"];
+            string pkString = (string)identity["PrivKey"];
+
+            byte[] keyData = Convert.FromBase64String(pkString);
+
+            return PrivateKey.Deserialize(keyData);
+        }
+
+        private static JObject ReadConfigFile(ref string repodir)
+        {
+            if (repodir == null)
             {
                 string homepath = Environment.GetEnvironmentVariable("USERPROFILE");
                 repodir = Path.Combine(homepath, ".ipfs");
             }
 
-            Stream s = File.OpenRead(Path.Combine(repodir, "config"));
-            StreamReader sr = new(s);
+            using Stream s = File.OpenRead(Path.Combine(repodir, "config"));
+            using StreamReader sr = new(s);
             string json = sr.ReadToEnd();
 
             JObject c = JObject.Parse(json);
-            JToken identity = c["Identity"];
-            string pkString = (string) identity["PrivKey"];
-
-            byte[] keyData = Convert.FromBase64String(pkString);
-
-            return PrivateKey.Deserialize(keyData);
+            return c;
         }
 
         public async Task VerifyDaemonAsync(PrivateKey privateKey, CancellationToken cancel = default)
