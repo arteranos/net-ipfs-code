@@ -14,12 +14,10 @@ namespace Ipfs.Http
     class FileSystemApi : IFileSystemApi
     {
         private IpfsClient ipfs;
-        private Lazy<DagNode> emptyFolder;
 
         internal FileSystemApi(IpfsClient ipfs)
         {
             this.ipfs = ipfs;
-            this.emptyFolder = new Lazy<DagNode>(() => ipfs.Object.NewDirectoryAsync().Result);
         }
 
         public async Task<IFileSystemNode> AddFileAsync(string path, AddFileOptions options = null, CancellationToken cancel = default)
@@ -172,10 +170,29 @@ namespace Ipfs.Http
             dir["Links"] = JToken.FromObject(linkList);
             var id = await ipfs.Dag.PutAsync(dir, "dag-pb", cancel: cancel).ConfigureAwait(false);
 
+#if true
+            // HACK: Retrieve the resulting serialized DAG node rather than serializing it itself.
+            using Stream s = await ipfs.PostDownloadAsync("block/get", cancel, id);
+            byte[] buffer = new byte[16 * 1024];
+            long totalBytes = 0;
+            while(true)
+            {
+                long n = s.Read(buffer, 0, buffer.Length);
+                if (n <= 0) break;
+                totalBytes += n;
+            }
+#else
+            // FIXME Block.Get broken -- Wrong HTTP Method. 
+            long totalBytes = 0;
+#endif
+            foreach (IFileSystemLink link in links)
+                totalBytes += link.Size;
+
             return new FileSystemNode
             {
                 Id = id,
                 Links = links,
+                Size = totalBytes,
                 IsDirectory = true
             };
         }
