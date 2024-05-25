@@ -16,7 +16,7 @@ namespace Ipfs.Http
         }
 
         // Same as in FileSystemApi, but it's tightly locked away.
-        public async Task<FileSystemNode> CreateDirectoryAsync(IEnumerable<IFileSystemLink> links, CancellationToken cancel)
+        public async Task<FileSystemNode> CreateDirectoryAsync(IEnumerable<IFileSystemLink> links, bool pin = true, CancellationToken cancel = default)
         {
             List<JToken> linkList = new();
 
@@ -36,8 +36,8 @@ namespace Ipfs.Http
 
             // Sorting? I've checked. kubo sorts the links on its own.
             dir["Links"] = JToken.FromObject(linkList);
-            var id = await ipfs.Dag.PutAsync(dir, "dag-pb", cancel: cancel).ConfigureAwait(false);
-
+            var id = await ipfs.Dag.PutAsync(dir, "dag-pb", pin: pin, cancel: cancel).ConfigureAwait(false);
+            
             // HACK: Retrieve the resulting serialized DAG node rather than serializing it itself.
             byte[] rawDAG = await ipfs.Block.GetAsync(id).ConfigureAwait(false);
             long totalBytes = rawDAG.LongLength;

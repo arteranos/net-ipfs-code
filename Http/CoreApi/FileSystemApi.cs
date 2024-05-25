@@ -142,14 +142,14 @@ namespace Ipfs.Http
             var links = nodes.Select(node => node.ToLink());
 #endif
             // Create the directory with links to the created files and sub-directories
-            FileSystemNode fsn = await CreateDirectoryAsync(links, cancel);
+            FileSystemNode fsn = await CreateDirectoryAsync(links, options.Pin, cancel);
 
             fsn.Name = Path.GetFileName(path);
 
             return fsn;
         }
 
-        public async Task<FileSystemNode> CreateDirectoryAsync(IEnumerable<IFileSystemLink> links, CancellationToken cancel)
+        public async Task<FileSystemNode> CreateDirectoryAsync(IEnumerable<IFileSystemLink> links, bool pin = true, CancellationToken cancel = default)
         {
             List<JToken> linkList = new();
 
@@ -169,7 +169,7 @@ namespace Ipfs.Http
 
             // Sorting? I've checked. kubo sorts the links on its own.
             dir["Links"] = JToken.FromObject(linkList);
-            var id = await ipfs.Dag.PutAsync(dir, "dag-pb", cancel: cancel).ConfigureAwait(false);
+            var id = await ipfs.Dag.PutAsync(dir, "dag-pb", pin: pin, cancel: cancel).ConfigureAwait(false);
 
             // HACK: Retrieve the resulting serialized DAG node rather than serializing it itself.
             byte[] rawDAG = await ipfs.Block.GetAsync(id).ConfigureAwait(false);

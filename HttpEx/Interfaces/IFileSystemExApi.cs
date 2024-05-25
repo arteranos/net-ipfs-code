@@ -14,7 +14,7 @@ namespace Ipfs.Http
         /// <param name="links"></param>
         /// <param name="cancel"></param>
         /// <returns>The resulting <see cref="FileSystemNode"/></returns>
-        public Task<FileSystemNode> CreateDirectoryAsync(IEnumerable<IFileSystemLink> links, CancellationToken cancel = default);
+        public Task<FileSystemNode> CreateDirectoryAsync(IEnumerable<IFileSystemLink> links, bool pin = true, CancellationToken cancel = default);
 
     }
 }
