@@ -19,7 +19,18 @@ namespace Ipfs.Http
 
         public async Task<byte[]> GetAsync(Cid id, CancellationToken cancel = default(CancellationToken))
         {
-            return await ipfs.DownloadBytesAsync("block/get", cancel, id).ConfigureAwait(false);
+            using Stream s = await ipfs.PostDownloadAsync("block/get", cancel, id);
+            using MemoryStream ms = new();
+            byte[] buffer = new byte[16 * 1024];
+
+            while (true)
+            {
+                int n = s.Read(buffer, 0, buffer.Length);
+                if (n <= 0) break;
+                ms.Write(buffer, 0, n);
+            }
+            ms.Position = 0;
+            return ms.ToArray();
         }
 
         public async Task<Cid> PutAsync(
