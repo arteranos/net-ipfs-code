@@ -167,24 +167,14 @@ namespace Ipfs.Http
             foreach (var link in links)
                 AddFileLink(link);
 
+            // Sorting? I've checked. kubo sorts the links on its own.
             dir["Links"] = JToken.FromObject(linkList);
             var id = await ipfs.Dag.PutAsync(dir, "dag-pb", cancel: cancel).ConfigureAwait(false);
 
-#if true
             // HACK: Retrieve the resulting serialized DAG node rather than serializing it itself.
-            using Stream s = await ipfs.PostDownloadAsync("block/get", cancel, id);
-            byte[] buffer = new byte[16 * 1024];
-            long totalBytes = 0;
-            while(true)
-            {
-                long n = s.Read(buffer, 0, buffer.Length);
-                if (n <= 0) break;
-                totalBytes += n;
-            }
-#else
-            // FIXME Block.Get broken -- Wrong HTTP Method. 
-            long totalBytes = 0;
-#endif
+            byte[] rawDAG = await ipfs.Block.GetAsync(id).ConfigureAwait(false);
+            long totalBytes = rawDAG.LongLength;
+
             foreach (IFileSystemLink link in links)
                 totalBytes += link.Size;
 
