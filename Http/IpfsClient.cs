@@ -227,11 +227,14 @@ namespace Ipfs.Http
                 {
                     if (api == null)
                     {
-                        if (HttpMessageHandler is HttpClientHandler handler && handler.SupportsAutomaticDecompression)
-                        {
-                            handler.AutomaticDecompression = DecompressionMethods.GZip
-                                | DecompressionMethods.Deflate;
-                        }
+                        // Suspected cause of hangs. And, why, when we connect to localhost?
+                        // https://github.com/mono/monodevelop/issues/7251
+                        // Moreover, Kubo 0.28.0 seems to be more responsive without Automatic Decompression...
+                        //if (HttpMessageHandler is HttpClientHandler handler && handler.SupportsAutomaticDecompression)
+                        //{
+                        //    handler.AutomaticDecompression = DecompressionMethods.GZip
+                        //        | DecompressionMethods.Deflate;
+                        //}
 
                         api = new HttpClient(HttpMessageHandler)
                         {
