@@ -254,6 +254,12 @@ namespace Ipfs.Http
         /// </summary>
         public HttpMessageHandler HttpMessageHandler { get; set; } = new HttpClientHandler();
 
+        private void EnsureBackgroundThread()
+        {
+            if (!Thread.CurrentThread.IsBackground)
+                throw new InvalidOperationException("Running in main thread -- may cause frame drops and deadlocks!");
+        }
+
         /// <summary>
         ///  Perform an <see href="https://ipfs.io/docs/api/">IPFS API command</see> returning a string.
         /// </summary>
@@ -278,6 +284,8 @@ namespace Ipfs.Http
         /// </exception>
         public async Task<string> DoCommandAsync(string command, CancellationToken cancel, string arg = null, params string[] options)
         {
+            EnsureBackgroundThread();
+
             var url = BuildCommand(command, arg, options);
 
             using (var response = await Api().PostAsync(url, null, cancel).ConfigureAwait(false))
@@ -306,6 +314,8 @@ namespace Ipfs.Http
 
         internal async Task DoCommandAsync(Uri url, HttpContent content, CancellationToken cancel)
         {
+            EnsureBackgroundThread();
+
             using (var response = await Api().PostAsync(url, new MultipartFormDataContent { { content, "\"file\"" } }, cancel).ConfigureAwait(false))
             {
                 await ThrowOnErrorAsync(response).ConfigureAwait(false);
@@ -346,6 +356,8 @@ namespace Ipfs.Http
         /// </exception>
         public async Task<T> DoCommandAsync<T>(string command, CancellationToken cancel, string arg = null, params string[] options)
         {
+            EnsureBackgroundThread();
+
             var json = await DoCommandAsync(command, cancel, arg, options).ConfigureAwait(false);
             return JsonConvert.DeserializeObject<T>(json);
         }
@@ -374,6 +386,8 @@ namespace Ipfs.Http
         /// </exception>
         public async Task<Stream> PostDownloadAsync(string command, CancellationToken cancel, string arg = null, params string[] options)
         {
+            EnsureBackgroundThread();
+
             var url = BuildCommand(command, arg, options);
 
             var request = new HttpRequestMessage(HttpMethod.Post, url);
@@ -409,6 +423,8 @@ namespace Ipfs.Http
         /// </exception>
         public async Task<Stream> DownloadAsync(string command, CancellationToken cancel, string arg = null, params string[] options)
         {
+            EnsureBackgroundThread();
+
             var url = BuildCommand(command, arg, options);
 
             var response = await Api().GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancel).ConfigureAwait(false);
@@ -442,6 +458,8 @@ namespace Ipfs.Http
         /// </exception>
         public async Task<byte[]> DownloadBytesAsync(string command, CancellationToken cancel, string arg = null, params string[] options)
         {
+            EnsureBackgroundThread();
+
             var url = BuildCommand(command, arg, options);
 
             var response = await Api().GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancel).ConfigureAwait(false);
@@ -480,6 +498,8 @@ namespace Ipfs.Http
         /// </exception>
         public async Task<String> UploadAsync(string command, CancellationToken cancel, Stream data, string name, params string[] options)
         {
+            EnsureBackgroundThread();
+
             var content = new MultipartFormDataContent();
             var streamContent = new StreamContent(data);
 
@@ -530,6 +550,8 @@ namespace Ipfs.Http
         /// </exception>
         public async Task<Stream> Upload2Async(string command, CancellationToken cancel, Stream data, string name, params string[] options)
         {
+            EnsureBackgroundThread();
+
             var content = new MultipartFormDataContent();
             var streamContent = new StreamContent(data);
 
@@ -550,6 +572,8 @@ namespace Ipfs.Http
         /// </summary>
         public async Task<String> UploadAsync(string command, CancellationToken cancel, byte[] data, params string[] options)
         {
+            EnsureBackgroundThread();
+
             var content = new MultipartFormDataContent();
             var streamContent = new ByteArrayContent(data);
 
