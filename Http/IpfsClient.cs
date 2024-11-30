@@ -256,8 +256,10 @@ namespace Ipfs.Http
 
         private void EnsureBackgroundThread()
         {
+#if ENFORCE_BGTHREAD
             if (!Thread.CurrentThread.IsBackground)
                 throw new InvalidOperationException("Running in main thread -- may cause frame drops and deadlocks!");
+#endif
         }
 
         /// <summary>
