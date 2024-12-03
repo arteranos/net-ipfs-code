@@ -46,6 +46,7 @@ namespace Ipfs
             Register<UtpNetworkProtocol>();
             Register<OnionNetworkProtocol>();
             Register<Libp2pWebrtcDirectNetworkProtocol>();
+            Register<WebrtcDirectNetworkProtocol>();
             Register<P2pCircuitNetworkProtocol>();
             Register<DnsNetworkProtocol>();
             Register<Dns4NetworkProtocol>();
@@ -490,6 +491,12 @@ namespace Ipfs
     {
         public override string Name => "libp2p-webrtc-direct";
         public override uint Code => 276;
+    }
+
+    internal class WebrtcDirectNetworkProtocol : ValuelessNetworkProtocol
+    {
+        public override string Name => "webrtc-direct";
+        public override uint Code => 280;
     }
 
     internal class UdtNetworkProtocol : ValuelessNetworkProtocol
