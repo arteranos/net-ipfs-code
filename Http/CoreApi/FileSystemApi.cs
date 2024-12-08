@@ -61,7 +61,9 @@ namespace Ipfs.Http
 
             opts.Add($"chunker=size-{options.ChunkSize}");
 
-            var response = await ipfs.Upload2Async("add", cancel, stream, name, opts.ToArray()).ConfigureAwait(false);
+            // UnityEngine.Debug.Log($"--> Upload: {name}");
+            using var response = await ipfs.Upload2Async("add", cancel, stream, name, opts.ToArray()).ConfigureAwait(false);
+            // UnityEngine.Debug.Log($"--- Upload: {name}, getting response...");
 
             // The result is a stream of LDJSON objects.
             // See https://github.com/ipfs/go-ipfs/issues/4852
@@ -72,6 +74,7 @@ namespace Ipfs.Http
             {
                 while (jr.Read())
                 {
+                    // UnityEngine.Debug.Log($"--- Upload: {name}, getting response item");
                     var r = await JObject.LoadAsync(jr, cancel).ConfigureAwait(false);
 
                     // If a progress report.
@@ -105,6 +108,8 @@ namespace Ipfs.Http
                 }
             }
 
+            // UnityEngine.Debug.Log($"<-- Upload: {name}, {fsn.Id}");
+
             fsn.IsDirectory = options.Wrap;
             return fsn;
         }
@@ -115,32 +120,25 @@ namespace Ipfs.Http
                 options = new AddFileOptions();
             options.Wrap = false;
 
-            // Add the files and sub-directories.
+            // Add the files and sub-directories, _one at a time_, because possibility of deadlocks.
             path = Path.GetFullPath(path);
-            var files = Directory
-                .EnumerateFiles(path)
-                .Select(p => AddFileAsync(p, options, cancel));
+
+            IEnumerable<IFileSystemNode> fileNodes = Enumerable.Empty<IFileSystemNode>();
+            foreach (string file in Directory.EnumerateFiles(path))
+                fileNodes = fileNodes.Append(await AddFileAsync(file, options, cancel));
+
             if (recursive)
             {
-                var folders = Directory
-                    .EnumerateDirectories(path)
-                    .Select(dir => AddDirectoryAsync(dir, recursive, options, cancel));
-                files = files.Union(folders);
+                IEnumerable<IFileSystemNode> folderNodes = Enumerable.Empty<IFileSystemNode>();
+                foreach (string dir in Directory.EnumerateDirectories(path))
+                    folderNodes = folderNodes.Append(await AddDirectoryAsync(dir, recursive, options, cancel));
+
+                fileNodes = fileNodes.Union(folderNodes);
             }
 
-            // go-ipfs v0.4.14 sometimes fails when sending lots of 'add file'
-            // requests.  It's happy with adding one file at a time.
-#if true
-            var links = new List<IFileSystemLink>();
-            foreach (var file in files)
-            {
-                var node = await file;
-                links.Add(node.ToLink());
-            }
-#else
-            var nodes = await Task.WhenAll(files);
-            var links = nodes.Select(node => node.ToLink());
-#endif
+            List<IFileSystemLink> links = new();
+            foreach (IFileSystemNode node in fileNodes) links.Add(node.ToLink());
+
             // Create the directory with links to the created files and sub-directories
             FileSystemNode fsn = await CreateDirectoryAsync(links, options.Pin, cancel);
 
