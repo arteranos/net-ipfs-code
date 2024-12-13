@@ -119,32 +119,105 @@ namespace Ipfs.Http
             if (options == null)
                 options = new AddFileOptions();
             options.Wrap = false;
+            var opts = new List<string>();
+            if (!options.Pin)
+                opts.Add("pin=false");
+            if (options.Wrap)
+                opts.Add("wrap-with-directory=true");
+            if (options.RawLeaves)
+                opts.Add("raw-leaves=true");
+            if (options.OnlyHash)
+                opts.Add("only-hash=true");
+            if (options.Trickle)
+                opts.Add("trickle=true");
+            if (options.Progress != null)
+                opts.Add("progress=true");
+            if (options.Hash != MultiHash.DefaultAlgorithmName)
+                opts.Add($"hash=${options.Hash}");
+            if (options.Encoding != MultiBase.DefaultAlgorithmName)
+                opts.Add($"cid-base=${options.Encoding}");
+            if (!string.IsNullOrWhiteSpace(options.ProtectionKey))
+                opts.Add($"protect={options.ProtectionKey}");
 
-            // Add the files and sub-directories, _one at a time_, because possibility of deadlocks.
-            path = Path.GetFullPath(path);
+            opts.Add($"chunker=size-{options.ChunkSize}");
 
-            IEnumerable<IFileSystemNode> fileNodes = Enumerable.Empty<IFileSystemNode>();
-            foreach (string file in Directory.EnumerateFiles(path))
-                fileNodes = fileNodes.Append(await AddFileAsync(file, options, cancel));
 
-            if (recursive)
+            string rootPath = Path.GetDirectoryName(path);
+            string rootDir = Path.GetFileName(path);
+
+            if (!Directory.Exists(rootPath))
+                throw new ArgumentException($"{path} is not an accessible directory");
+
+            // Depth-first, only files. Let Kubo rebuild the hierarchy.
+            List<string> fileCollection = ListDirectory(path, recursive, false);
+
+            if (fileCollection.Count == 0) fileCollection.Add(path);
+
+            for (int i = 0; i < fileCollection.Count; i++)
             {
-                IEnumerable<IFileSystemNode> folderNodes = Enumerable.Empty<IFileSystemNode>();
-                foreach (string dir in Directory.EnumerateDirectories(path))
-                    folderNodes = folderNodes.Append(await AddDirectoryAsync(dir, recursive, options, cancel));
-
-                fileNodes = fileNodes.Union(folderNodes);
+                string file = fileCollection[i];
+                fileCollection[i] = file[(rootPath.Length+1)..];
             }
 
-            List<IFileSystemLink> links = new();
-            foreach (IFileSystemNode node in fileNodes) links.Add(node.ToLink());
+            using var response = await ipfs.UploadMultipleAsync("add", cancel, rootPath, fileCollection, opts.ToArray()).ConfigureAwait(false);
 
-            // Create the directory with links to the created files and sub-directories
-            FileSystemNode fsn = await CreateDirectoryAsync(links, options.Pin, cancel);
+            FileSystemNode fsn = null;
+            using (var sr = new StreamReader(response))
+            using (var jr = new JsonTextReader(sr) { SupportMultipleContent = true })
+            {
+                while (jr.Read())
+                {
+                    // UnityEngine.Debug.Log($"--- Upload: {name}, getting response item");
+                    var r = await JObject.LoadAsync(jr, cancel).ConfigureAwait(false);
 
-            fsn.Name = Path.GetFileName(path);
+                    // If a progress report.
+                    if (r.ContainsKey("Bytes"))
+                    {
+                        options.Progress?.Report(new TransferProgress
+                        {
+                            Name = (string)r["Name"],
+                            Bytes = (ulong)r["Bytes"]
+                        });
+                    }
 
-            return fsn;
+                    // Else must be an added file.
+                    else
+                    {
+                        fsn = new FileSystemNode
+                        {
+                            Id = (string)r["Hash"],
+                            Size = long.Parse((string)r["Size"]),
+                            IsDirectory = false,
+                            Name = (string)r["Name"],
+                            Links = Enumerable.Empty<FileSystemLink>(),
+                        };
+                        // UnityEngine.Debug.Log($"Name: {fsn.Name}, Hash: {fsn.Id}, Size: {fsn.Size}");
+                    }
+                }
+            }
+
+            // Last FSN is supposed to be the root directory of the submitted hierarchy.
+            // Returned FSN data is incomplete, ask Kubo about the result.
+            return await ipfs.FileSystem.ListAsync(fsn.Id, cancel);
+        }
+
+        private List<string> ListDirectory(string dir, bool recursive, bool self)
+        {
+            List<string> list = new();
+
+            if(recursive)
+            {
+                foreach (string subdir in Directory.EnumerateDirectories(dir))
+                    list.AddRange(ListDirectory(subdir, recursive, false));
+            }
+
+            List<string> files = Directory.EnumerateFiles(dir).ToList();
+            files.Sort();
+            list.AddRange(files);
+
+            if(self) list.Add(dir);
+
+            return list;
         }
 
         public async Task<FileSystemNode> CreateDirectoryAsync(IEnumerable<IFileSystemLink> links, bool pin = true, CancellationToken cancel = default)

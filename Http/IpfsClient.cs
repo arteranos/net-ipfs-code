@@ -1,4 +1,5 @@
 ﻿using Ipfs.CoreApi;
+using Ipfs.Unity;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -564,6 +565,56 @@ namespace Ipfs.Http
             var url = BuildCommand(command, null, options);
 
             var response = await Api().PostAsync(url, content, cancel).ConfigureAwait(false);
+            await ThrowOnErrorAsync(response).ConfigureAwait(false);
+
+            return await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+        }
+
+        public async Task<Stream> UploadMultipleAsync(string command, CancellationToken cancel, string rootDir, List<string> paths, params string[] options)
+        {
+            EnsureBackgroundThread();
+
+            var content = new MultipartFormDataContent();
+            List<Stream> streams = new();
+
+            foreach (string path in paths)
+            {
+                string fullPath = Path.Combine(rootDir, path); // For file retrieval
+                string fileName = path.Replace("\\", "/"); // For file names
+
+                System.Net.Http.HttpContent contentPart = null;
+                if (Directory.Exists(fullPath))
+                {
+                    contentPart = new ByteArrayContent(new byte[0]);
+                    contentPart.Headers.ContentType = new MediaTypeHeaderValue("application/x-directory");
+                }
+                else
+                {
+                    Stream stream = File.OpenRead(fullPath);
+                    streams.Add(stream);
+                    contentPart = new StreamContent(stream);
+                    //contentPart = new StreamContent(new AsyncLazyBlocking<Stream>(delegate
+                    //{ return File.OpenRead(fullPath); }));
+                    contentPart.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+                }
+
+                content.Add(contentPart, "file", fileName);
+            }
+
+            var url = BuildCommand(command, null, options);
+
+            HttpResponseMessage response = null;
+
+            try
+            {
+                response = await Api().PostAsync(url, content, cancel).ConfigureAwait(false);
+            }
+            finally
+            {
+                // Need to ~~cross~~ close the streams, whatever it takes.
+                foreach (var stream in streams) stream.Dispose();
+            }
+
             await ThrowOnErrorAsync(response).ConfigureAwait(false);
 
             return await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
