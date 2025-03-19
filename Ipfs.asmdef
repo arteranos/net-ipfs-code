@@ -1,7 +1,9 @@
 {
-    "name": "ipfs.Core",
+    "name": "Ipfs",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "GUID:9887cbcdd0e7a8b41ad31117d05535ce"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

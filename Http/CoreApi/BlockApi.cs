@@ -5,7 +5,11 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
+#if UNITY_STANDALONE
 using Unity.Net.Http;
+#else
+using System.Net.Http;
+#endif
 
 namespace Ipfs.Http
 {

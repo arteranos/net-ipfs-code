@@ -1,5 +1,4 @@
 ﻿using Ipfs.CoreApi;
-using Ipfs.Unity;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -12,7 +11,11 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
+#if UNITY_STANDALONE
 using Unity.Net.Http;
+#else
+using System.Net.Http;
+#endif
 
 namespace Ipfs.Http
 {
