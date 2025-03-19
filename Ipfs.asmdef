@@ -2,7 +2,7 @@
     "name": "Ipfs",
     "rootNamespace": "",
     "references": [
-        "GUID:9887cbcdd0e7a8b41ad31117d05535ce"
+        "Unity.Net.Http"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
