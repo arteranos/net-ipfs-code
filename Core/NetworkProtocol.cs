@@ -54,6 +54,7 @@ namespace Ipfs
             Register<DnsAddrNetworkProtocol>();
             Register<WssNetworkProtocol>();
             Register<IpcidrNetworkProtocol>();
+            Register<TlsNetworkProtocol>();
         }
 
         /// <summary>
@@ -215,7 +216,7 @@ namespace Ipfs
         public override void ReadValue(CodedInputStream stream)
         {
             var bytes = stream.ReadSomeBytes(2);
-            Port = (ushort) IPAddress.NetworkToHostOrder(BitConverter.ToInt16(bytes, 0));
+            Port = (ushort)IPAddress.NetworkToHostOrder(BitConverter.ToInt16(bytes, 0));
             Value = Port.ToString(CultureInfo.InvariantCulture);
         }
         public override void WriteValue(CodedOutputStream stream)
@@ -346,7 +347,7 @@ namespace Ipfs
         {
             var bytes = MultiHash?.ToArray() ?? Array.Empty<byte>();
             stream.WriteLength(bytes.Length);
-            stream.WriteSomeBytes(bytes); 
+            stream.WriteSomeBytes(bytes);
         }
     }
 
@@ -597,5 +598,11 @@ namespace Ipfs
             var bytes = BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)RoutingPrefix));
             stream.WriteSomeBytes(bytes);
         }
+    }
+    
+    internal class TlsNetworkProtocol : ValuelessNetworkProtocol
+    {
+        public override string Name => "tls";
+        public override uint Code => 448;
     }
 }
